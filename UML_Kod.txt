@@ -1,0 +1,141 @@
+@startuml
+
+'====================================================
+'                     SHAPES
+'====================================================
+abstract class Shape {
+    +Name : string
+    +Color : ConsoleColor
+    +Draw() : void
+}
+
+class Rectangle {
+    +X : int
+    +Y : int
+    +Width : int
+    +Height : int
+    +Draw() : void
+}
+
+class Circle {
+    +CX : int
+    +CY : int
+    +R  : int
+    +Draw() : void
+}
+
+Shape <|-- Rectangle
+Shape <|-- Circle
+
+
+'====================================================
+'                  SHAPE BUILDERS
+'====================================================
+interface IShapeBuilder {
+    +AskUserParameters() : void
+    +Build() : Shape
+}
+
+class RectangleBuilder {
+    -x : int
+    -y : int
+    -width : int
+    -height : int
+    -color : ConsoleColor
+    +AskUserParameters() : void
+    +Build() : Shape
+}
+
+class CircleBuilder {
+    -cx : int
+    -cy : int
+    -r : int
+    -color : ConsoleColor
+    +AskUserParameters() : void
+    +Build() : Shape
+}
+
+IShapeBuilder <|.. RectangleBuilder
+IShapeBuilder <|.. CircleBuilder
+
+RectangleBuilder --> Rectangle
+CircleBuilder --> Circle
+
+
+'====================================================
+'                    SHAPE FACTORY
+'====================================================
+class ShapeBuilderFactory {
+    +CreateBuilder(shapeType : string) : IShapeBuilder
+}
+
+ShapeBuilderFactory --> IShapeBuilder
+
+
+'====================================================
+'                      CANVAS
+'====================================================
+class Canvas {
+    +Shapes : List<Shape>
+    +Draw() : void
+}
+
+Canvas --> "0..*" Shape
+
+
+'====================================================
+'                      COMMANDS
+'====================================================
+interface ICommand {
+    +Execute() : void
+    +Undo() : void
+}
+
+class AddShapeCommand {
+    -canvas : Canvas
+    -shape : Shape
+    +Execute() : void
+    +Undo() : void
+}
+
+class MoveShapeCommand {
+    -shape : Rectangle
+    -oldX : int
+    -oldY : int
+    -newX : int
+    -newY : int
+    +Execute() : void
+    +Undo() : void
+}
+
+class ChangeColorCommand {
+    -shape : Shape
+    -oldColor : ConsoleColor
+    -newColor : ConsoleColor
+    +Execute() : void
+    +Undo() : void
+}
+
+ICommand <|.. AddShapeCommand
+ICommand <|.. MoveShapeCommand
+ICommand <|.. ChangeColorCommand
+
+AddShapeCommand --> Canvas
+AddShapeCommand --> Shape
+MoveShapeCommand --> Rectangle
+ChangeColorCommand --> Shape
+
+
+'====================================================
+'                  COMMAND MANAGER
+'====================================================
+class CommandManager {
+    -undoStack : Stack<ICommand>
+    -redoStack : Stack<ICommand>
+    +Execute(cmd : ICommand) : void
+    +Undo() : void
+    +Redo() : void
+}
+
+CommandManager --> ICommand : manages
+@enduml
