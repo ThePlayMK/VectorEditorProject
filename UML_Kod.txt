@@ -3,16 +3,59 @@
 '====================================================
 '                SHAPES (COMPOSITE)
 '====================================================
-abstract class Shape
+interface Shape
+{
+    + Execute()
+}
 
 class Rectangle
+{
+    - Point point1
+    - Point point2
+    + Execute()
+}
 class Circle
+{
+    - Point point
+    - Double radius
+    + Execute()
+}
 class Triangle
+{
+    - Point point1
+    - Point point2
+    - Point point3
+    + Execute()
+}
 class Line
+{
+    - Point point1
+    - Point point2
+    + Execute()
+}
 class CustomShape
+{
+    - List<Point> points;
+    + Execute()
+}
 
 class Layer
+{
+-children: Shape[]
++AddShape(Shape)
++removeShape(Shpae)
++getShape()
++execute()
+}
+
 class Canvas
+{
+-children: Layer[]
++AddLayer(Layer)
++removeLayer(Layer)
++getLayer()
++execute()
+}
 
 Shape <|-- Rectangle
 Shape <|-- Circle
@@ -30,12 +73,51 @@ Canvas o-->  Layer
 '              SHAPE BUILDERS (BUILDER)
 '====================================================
 interface IShapeBuilder
+{
+  + reset()
+  + BuildStart()
+  + BuildLine()
+}
 
 class RectangleBuilder
+{
+  + reset()
+  + BuildStart()
+  + BuildLine()
+  + GetResult()
+}
+
 class CircleBuilder
+{
+  + reset()
+  + BuildStart()
+  + BuildLine()
+  + GetResult()
+}
+
 class TriangleBuilder
+{
+  + reset()
+  + BuildStart()
+  + BuildLine()
+  + GetResult()
+}
+
 class LineBuilder
+{
+  + reset()
+  + BuildStart()
+  + BuildLine()
+  + GetResult()
+}
+
 class CustomShapeBuilder
+{
+  + reset()
+  + BuildStart()
+  + BuildLine()
+  + GetResult()
+}
 
 IShapeBuilder <|.. RectangleBuilder
 IShapeBuilder <|.. CircleBuilder
@@ -54,14 +136,38 @@ CustomShapeBuilder ..> CustomShape
 '           MODIFICATION (STRATEGY)
 '====================================================
 interface IModificationStrategy
+{
++execute()
+}
 
 class ChangeContentColorStrategy
+{
++execute()
+}
 class ChangeContourColorStrategy
+{
++execute()
+}
 class ScaleStrategy
+{
++execute()
+}
 class AlignStrategy
+{
++execute()
+}
 class RemoveStrategy
+{
++execute()
+}
 class BlockLayerStategy
+{
++execute()
+}
 class HideLayerStrategy
+{
++execute()
+}
 
 IModificationStrategy <|.. ChangeContentColorStrategy
 IModificationStrategy <|.. ChangeContourColorStrategy
@@ -72,6 +178,9 @@ IModificationStrategy <|.. BlockLayerStategy
 IModificationStrategy <|.. HideLayerStrategy
 
 class ApplyStrategyCommand
+{
++execute()
+}
 
 ApplyStrategyCommand --> IModificationStrategy 
 
@@ -79,12 +188,41 @@ ApplyStrategyCommand --> IModificationStrategy
 '====================================================
 '              EDITOR STATE (STATE)
 '====================================================
-interface IEditorState
+interface IEditorState{
++doThis()
++doThat()
+}
 
 class SavedState
+{
+-context
++setSaved(context)
++doThis()
++doThat()
+}
 class ModifiedState
+{
+-context
++setModified(context)
++doThis()
++doThat()
+}
 class EmptyState
+{
+-context
++setEmpty(context)
++doThis()
++doThat()
+}
+
 class EditorContext
+{
+-state
++EditorContext(initialState)
++changeState(state)
++doThis
++doThat
+}
 
 IEditorState <|.. SavedState
 IEditorState <|.. ModifiedState
@@ -93,9 +231,7 @@ IEditorState <|.. EmptyState
 EditorContext o--> IEditorState
 SavedState    --> EditorContext
 ModifiedState --> EditorContext
-EmptyState --> EditorContext
-
-ApplyStrategyCommand  --> Canvas        
+EmptyState --> EditorContext   
 
 
 '====================================================
@@ -104,8 +240,29 @@ ApplyStrategyCommand  --> Canvas
 interface ICommand
 
 class AddShapeCommand
+{
+  + AddShapeCommand(IShapeBuilder)
+  + ChangeBuilder(IShapeBuilder)
+  + Execute (Type)
+}
+
 class GroupCommand
+{
+  -receiver
+  -params
+  +GroupCommand()
+  +Command1(receiver,params)
+  +Execute()
+}
+
 class ShowNetCommand
+{
+  -receiver
+  -params
+  +ShowNetCommand()
+  +Command1(receiver,params)
+  +Execute()
+}
 
 ICommand <|.. AddShapeCommand
 ICommand <|.. ApplyStrategyCommand
@@ -125,7 +282,7 @@ class CommandManager {
     - undoStack
     - redoStack
     - editorContext : EditorContext
-    + Execute(cmd : ICommand)
+    + Execute(ICommand)
     + Undo()
     + Redo()
 }
@@ -139,11 +296,15 @@ CommandManager --> EditorContext
 '====================================================
 class Point 
 {
-    - int X
-    - int Y
+    - int x
+    - int y
 }
 
 class Net
+{
+  -int densityX
+  -int densityY
+}
 
 Circle       o-->  Point
 Triangle     o-->  Point
