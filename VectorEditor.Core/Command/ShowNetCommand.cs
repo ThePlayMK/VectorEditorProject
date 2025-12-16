@@ -1,6 +1,6 @@
 namespace VectorEditor.Core.Command;
 
-public class ScaleShapeCommand
+public class ShowNetCommand
 {
     
 }

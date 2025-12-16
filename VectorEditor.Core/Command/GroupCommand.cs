@@ -1,6 +1,6 @@
 namespace VectorEditor.Core.Command;
 
-public class CopyShapeCommand
+public class GroupCommand
 {
-    
+
 }
