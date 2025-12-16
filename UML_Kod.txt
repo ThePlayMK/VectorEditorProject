@@ -137,36 +137,36 @@ CustomShapeBuilder ..> CustomShape
 '====================================================
 interface IModificationStrategy
 {
-+execute()
++Execute()
 }
 
 class ChangeContentColorStrategy
 {
-+execute()
++Execute()
 }
 class ChangeContourColorStrategy
 {
-+execute()
++Execute()
 }
 class ScaleStrategy
 {
-+execute()
++Execute()
 }
 class AlignStrategy
 {
-+execute()
++Execute()
 }
 class RemoveStrategy
 {
-+execute()
++Execute()
 }
 class BlockLayerStategy
 {
-+execute()
++Execute()
 }
 class HideLayerStrategy
 {
-+execute()
++Execute()
 }
 
 IModificationStrategy <|.. ChangeContentColorStrategy
@@ -179,7 +179,7 @@ IModificationStrategy <|.. HideLayerStrategy
 
 class ApplyStrategyCommand
 {
-+execute()
++Execute()
 }
 
 ApplyStrategyCommand --> IModificationStrategy 
@@ -238,6 +238,9 @@ EmptyState --> EditorContext
 '                COMMANDS (COMMAND)
 '====================================================
 interface ICommand
+{
+  + Execute()
+}
 
 class AddShapeCommand
 {
