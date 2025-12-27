@@ -12,40 +12,39 @@
         WindowState="Maximized">
     <Window.Styles>
         <Style Selector="Button.Round">
-            <Setter Property="CornerRadius" Value="50"></Setter>
-            <Setter Property="Width" Value="40"></Setter>
-            <Setter Property="Height" Value="40"></Setter>
-            <Setter Property="Margin" Value="1"></Setter>
-            <Setter Property="HorizontalAlignment" Value="Center"></Setter>
-            <Setter Property="VerticalAlignment" Value="Center"></Setter>
-            <Setter Property="BorderThickness" Value="3"></Setter>
+            <Setter Property="CornerRadius" Value="50" />
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Margin" Value="1" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="BorderThickness" Value="3" />
         </Style>
         <Style Selector="Button.Selected">
-            <Setter Property="BorderBrush" Value="Gray"></Setter>
+            <Setter Property="BorderBrush" Value="Gray" />
         </Style>
         <Style Selector="Button.MenuLink">
-            <Setter Property="Background" Value="Transparent"></Setter>
-            <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
-            <Setter Property="HorizontalContentAlignment" Value="Left"></Setter>
-            <Setter Property="Padding" Value="15,10"></Setter>
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="Padding" Value="15,10" />
         </Style>
         <Style Selector="Button.Colors">
-            <Setter Property="Width" Value="17"></Setter>
-            <Setter Property="Height" Value="17"></Setter>
+            <Setter Property="Width" Value="17" />
+            <Setter Property="Height" Value="17" />
         </Style>
         <Style Selector="TextBox.Small">
-            <Setter Property="Width" Value="40"></Setter>
-            <Setter Property="Height" Value="17"></Setter>
-            <Setter Property="MinHeight" Value="0"></Setter>
-            <Setter Property="MinWidth" Value="0"></Setter>
-            <Setter Property="Padding" Value="0"></Setter>
-            <Setter Property="Margin" Value="0"></Setter>
-            <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
-            <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
-            <Setter Property="FontSize" Value="10"></Setter>
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Height" Value="17" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="10" />
         </Style>
     </Window.Styles>
-
 
     <SplitView Name="MainSplitView"
                DisplayMode="Overlay"
@@ -54,12 +53,12 @@
 
         <SplitView.Pane>
             <StackPanel Margin="0,50,0,0">
-                <TextBlock Text="PROJECT" FontWeight="Bold" Margin="15,10" Opacity="0.6"></TextBlock>
+                <TextBlock Text="PROJECT" FontWeight="Bold" Margin="15,10" Opacity="0.6" />
                 <Button Classes="MenuLink">New Project</Button>
                 <Button Classes="MenuLink" Click="OpenFile">Open File</Button>
                 <Button Classes="MenuLink">Save</Button>
-                <Separator Margin="10" Opacity="0.2"></Separator>
-                <TextBlock Text="EXPORT" FontWeight="Bold" Margin="15,10" Opacity="0.6"></TextBlock>
+                <Separator Margin="10" Opacity="0.2" />
+                <TextBlock Text="EXPORT" FontWeight="Bold" Margin="15,10" Opacity="0.6" />
                 <Button Classes="MenuLink">Export PNG</Button>
                 <Button Classes="MenuLink">Export JPG</Button>
                 <Button Classes="MenuLink">Export SVG</Button>
@@ -69,14 +68,13 @@
         <SplitView.Content>
             <Grid
                 RowDefinitions="50,*"
-                ColumnDefinitions="50,*, 250"
-                ShowGridLines="True">
+                ColumnDefinitions="50,*, 250">
                 <Panel VerticalAlignment="Center"
                        HorizontalAlignment="Center"
                        Grid.Column="0"
                        Grid.Row="0">
                     <Button Classes="Round" ToolTip.Tip="Menu" Click="ToggleMenu">
-                        <material:MaterialIcon Kind="Menu"></material:MaterialIcon>
+                        <material:MaterialIcon Kind="Menu" />
                     </Button>
                 </Panel>
                 <StackPanel
@@ -85,32 +83,35 @@
                     Orientation="Vertical"
                     HorizontalAlignment="Center"
                     Button.Click="SelectTool">
-                    <Button Classes="Round" ToolTip.Tip="Selector">
-                        <material:MaterialIcon Kind="CursorPointer"></material:MaterialIcon>
+                    <Button Classes="Round" ToolTip.Tip="Selector" Tag="Selector">
+                        <material:MaterialIcon Kind="CursorPointer" />
                     </Button>
-                    <Button Classes="Round" ToolTip.Tip="Move">
-                        <material:MaterialIcon Kind="Pan"></material:MaterialIcon>
+                    <Button Classes="Round" ToolTip.Tip="Hand" Tag="Hand">
+                        <material:MaterialIcon Kind="HandBackRight" />
                     </Button>
-                    <Button Classes="Round" ToolTip.Tip="Scale">
-                        <material:MaterialIcon Kind="Resize"></material:MaterialIcon>
+                    <Button Classes="Round" ToolTip.Tip="Move" Tag="Move">
+                        <material:MaterialIcon Kind="Pan" />
                     </Button>
-                    <Button Classes="Round" ToolTip.Tip="Brush">
-                        <material:MaterialIcon Kind="Brush"></material:MaterialIcon>
+                    <Button Classes="Round" ToolTip.Tip="Scale" Tag="Scale">
+                        <material:MaterialIcon Kind="Resize" />
                     </Button>
-                    <Button Classes="Round" ToolTip.Tip="Eraser">
-                        <material:MaterialIcon Kind="Eraser"></material:MaterialIcon>
+                    <Button Classes="Round" ToolTip.Tip="Brush" Tag="Brush">
+                        <material:MaterialIcon Kind="Brush" />
                     </Button>
-                    <Button Classes="Round" ToolTip.Tip="Line">
-                        <material:MaterialIcon Kind="VectorLine"></material:MaterialIcon>
+                    <Button Classes="Round" ToolTip.Tip="Eraser" Tag="Eraser">
+                        <material:MaterialIcon Kind="Eraser" />
                     </Button>
-                    <Button Classes="Round" ToolTip.Tip="Rectangle">
-                        <material:MaterialIcon Kind="VectorSquare"></material:MaterialIcon>
+                    <Button Classes="Round" ToolTip.Tip="Line" Tag="Line">
+                        <material:MaterialIcon Kind="VectorLine" />
                     </Button>
-                    <Button Classes="Round" ToolTip.Tip="Ellipse">
-                        <material:MaterialIcon Kind="VectorEllipse"></material:MaterialIcon>
+                    <Button Classes="Round" ToolTip.Tip="Rectangle" Tag="Rectangle">
+                        <material:MaterialIcon Kind="VectorSquare" />
                     </Button>
-                    <Button Classes="Round" ToolTip.Tip="Custom Shape">
-                        <material:MaterialIcon Kind="VectorPolyline"></material:MaterialIcon>
+                    <Button Classes="Round" ToolTip.Tip="Ellipse" Tag="Ellipse">
+                        <material:MaterialIcon Kind="VectorEllipse" />
+                    </Button>
+                    <Button Classes="Round" ToolTip.Tip="CustomShape" Tag="CustomShape">
+                        <material:MaterialIcon Kind="VectorPolyline" />
                     </Button>
                 </StackPanel>
                 <StackPanel
@@ -120,77 +121,93 @@
                     VerticalAlignment="Center"
                     HorizontalAlignment="Left">
                     <Button Classes="Round" ToolTip.Tip="Undo">
-                        <material:MaterialIcon Kind="Undo"></material:MaterialIcon>
+                        <material:MaterialIcon Kind="Undo" />
                     </Button>
                     <Button Classes="Round" ToolTip.Tip="Redo">
-                        <material:MaterialIcon Kind="Redo"></material:MaterialIcon>
+                        <material:MaterialIcon Kind="Redo" />
                     </Button>
+                    <TextBlock Name="Test">Test</TextBlock>
                 </StackPanel>
-                <StackPanel Grid.Column="1" Grid.Row="1">
-                    <Canvas Background="White" Width="700" Height="700" HorizontalAlignment="Center"
-                            VerticalAlignment="Center" Margin="5">
-                    </Canvas>
-                </StackPanel>
+                <Grid Grid.Column="1" Grid.Row="1">
+                    <Border Name="CanvasBorder"
+                            Background="Gray"
+                            ClipToBounds="True"
+                            PointerWheelChanged="Canvas_PointerWheelChanged"
+                            PointerPressed="Canvas_PointerPressed"
+                            PointerReleased="Canvas_PointerReleased"
+                            PointerMoved="Canvas_PointerMoved">
+                        <Canvas Name="MyCanvas"
+                                Background="White"
+                                Width="700" Height="700"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                            <Canvas.RenderTransform>
+                                <MatrixTransform />
+                            </Canvas.RenderTransform>
+                        </Canvas>
+                    </Border>
+                </Grid>
                 <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Classes="Round" ToolTip.Tip="Dark/Light Mode" Click="ToggleThemeChange">
-                        <material:MaterialIcon Kind="ThemeLightDark"></material:MaterialIcon>
+                        <material:MaterialIcon Kind="ThemeLightDark" />
                     </Button>
                 </StackPanel>
                 <StackPanel Grid.Column="2" Grid.Row="1" Orientation="Vertical">
                     <StackPanel Margin="15">
-                        <TextBlock Text="PROPERTIES" FontWeight="Bold" Opacity="0.6" FontSize="16"></TextBlock>
-                        <TextBlock Text="COLOR" FontWeight="Bold" Opacity="0.6"></TextBlock>
+                        <TextBlock Text="PROPERTIES" FontWeight="Bold" Opacity="0.6" FontSize="16" />
+                        <TextBlock Text="COLOR" FontWeight="Bold" Opacity="0.6" />
                         <WrapPanel Button.Click="SelectColor">
-                            <Button Background="Black" Classes="Colors"></Button>
-                            <Button Background="DarkGray" Classes="Colors"></Button>
-                            <Button Background="LightGray" Classes="Colors"></Button>
-                            <Button Background="White" Classes="Colors"></Button>
-                            <Button Background="DarkRed" Classes="Colors"></Button>
-                            <Button Background="Red" Classes="Colors"></Button>
-                            <Button Background="Tomato" Classes="Colors"></Button>
-                            <Button Background="OrangeRed" Classes="Colors"></Button>
-                            <Button Background="Orange" Classes="Colors"></Button>
-                            <Button Background="Gold" Classes="Colors"></Button>
-                            <Button Background="Yellow" Classes="Colors"></Button>
-                            <Button Background="YellowGreen" Classes="Colors"></Button>
-                            <Button Background="Lime" Classes="Colors"></Button>
-                            <Button Background="SeaGreen" Classes="Colors"></Button>
-                            <Button Background="Teal" Classes="Colors"></Button>
-                            <Button Background="Cyan" Classes="Colors"></Button>
-                            <Button Background="DeepSkyBlue" Classes="Colors"></Button>
-                            <Button Background="DodgerBlue" Classes="Colors"></Button>
-                            <Button Background="Blue" Classes="Colors"></Button>
-                            <Button Background="Navy" Classes="Colors"></Button>
-                            <Button Background="BlueViolet" Classes="Colors"></Button>
-                            <Button Background="Purple" Classes="Colors"></Button>
-                            <Button Background="Magenta" Classes="Colors"></Button>
-                            <Button Background="HotPink" Classes="Colors"></Button>
+                            <Button Background="Black" Classes="Colors" />
+                            <Button Background="DarkGray" Classes="Colors" />
+                            <Button Background="LightGray" Classes="Colors" />
+                            <Button Background="White" Classes="Colors" />
+                            <Button Background="DarkRed" Classes="Colors" />
+                            <Button Background="Red" Classes="Colors" />
+                            <Button Background="Tomato" Classes="Colors" />
+                            <Button Background="OrangeRed" Classes="Colors" />
+                            <Button Background="Orange" Classes="Colors" />
+                            <Button Background="Gold" Classes="Colors" />
+                            <Button Background="Yellow" Classes="Colors" />
+                            <Button Background="YellowGreen" Classes="Colors" />
+                            <Button Background="Lime" Classes="Colors" />
+                            <Button Background="SeaGreen" Classes="Colors" />
+                            <Button Background="Teal" Classes="Colors" />
+                            <Button Background="Cyan" Classes="Colors" />
+                            <Button Background="DeepSkyBlue" Classes="Colors" />
+                            <Button Background="DodgerBlue" Classes="Colors" />
+                            <Button Background="Blue" Classes="Colors" />
+                            <Button Background="Navy" Classes="Colors" />
+                            <Button Background="BlueViolet" Classes="Colors" />
+                            <Button Background="Purple" Classes="Colors" />
+                            <Button Background="Magenta" Classes="Colors" />
+                            <Button Background="HotPink" Classes="Colors" />
                         </WrapPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock>R:</TextBlock>
-                            <TextBox Classes="Small" Margin="3,0,3,0" Name="InputColorR">0</TextBox>
+                            <TextBox Classes="Small" Margin="3,0,3,0" Name="InputColorR" TextChanged="Color_InputChange">0</TextBox>
                             <TextBlock>G:</TextBlock>
-                            <TextBox Classes="Small" Margin="3,0,3,0" Name="InputColorG">0</TextBox>
+                            <TextBox Classes="Small" Margin="3,0,3,0" Name="InputColorG" TextChanged="Color_InputChange">0</TextBox>
                             <TextBlock>B:</TextBlock>
-                            <TextBox Classes="Small" Margin="3,0,0,0" Name="InputColorB">0</TextBox>
+                            <TextBox Classes="Small" Margin="3,0,0,0" Name="InputColorB" TextChanged="Color_InputChange">0</TextBox>
                             <Panel Classes="Colors" Margin="15,0,0,0" Width="17" Height="17" Background="Black"
-                                   Name="SelectedColor">
-                            </Panel>
+                                   Name="SelectedColor" />
                         </StackPanel>
-                        <TextBlock Text="OPACITY" FontWeight="Bold" Opacity="0.6" Margin="0, 15,0,0"></TextBlock>
+                        <TextBlock Text="OPACITY" FontWeight="Bold" Opacity="0.6" Margin="0, 15,0,0" />
                         <StackPanel Orientation="Horizontal">
-                            <Slider Value="0" Minimum="0" Maximum="100" MinWidth="120" />
-                            <TextBox Classes="Small" Margin="3,0,3,0" Name="InputOpacity">0</TextBox>
+                            <Slider Value="100" Minimum="0" Maximum="100" MinWidth="120" PointerWheelChanged="Opacity_PointerWheelChanged" ValueChanged="Opacity_SliderChanged" Name="OpacitySlider"/>
+                            <TextBox Classes="Small" Margin="3,0,3,0" Name="OpacityInput" TextChanged="Opacity_InputChange">100</TextBox>
                         </StackPanel>
                         <Grid RowDefinitions="*" ColumnDefinitions="*, auto, auto">
                             <TextBlock Text="LAYERS" FontWeight="Bold" Opacity="0.6" Grid.Row="0"
-                                       VerticalAlignment="Center">
-                            </TextBlock>
-                            <Button Grid.Column="1" VerticalAlignment="Center" Click="AddLayer">+</Button>
-                            <Button Grid.Column="2" VerticalAlignment="Center" Click="RemoveLayer">-</Button>
+                                       VerticalAlignment="Center" />
+                            <Button Grid.Column="1" VerticalAlignment="Center" Click="AddLayer" ToolTip.Tip="Add Layer">+</Button>
+                            <Button Grid.Column="2" VerticalAlignment="Center" Click="RemoveLayer"
+                                    ToolTip.Tip="Remove Layer">
+                                -
+                            </Button>
                         </Grid>
                         <ScrollViewer Height="250">
-                            <StackPanel Button.Click="SelectLayer" Name="LayersStackPanel" Orientation="Vertical"></StackPanel>
+                            <StackPanel Button.Click="SelectLayer" Name="LayersStackPanel" Orientation="Vertical" />
                         </ScrollViewer>
                     </StackPanel>
                 </StackPanel>

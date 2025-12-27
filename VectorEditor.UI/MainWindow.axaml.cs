@@ -1,19 +1,20 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Styling;
 using Avalonia.Platform.Storage;
-using System.IO;
+using Avalonia.Styling;
 using Avalonia.VisualTree;
 
 namespace VectorEditor.UI
 {
     public partial class MainWindow : Window
     {
-        private LayerWidget? _selectedLayer;
-        private Button? _activeToolButton;
-        private IBrush _selectedColor = new SolidColorBrush(Colors.Black);
-        private int _layerCount;
+        private readonly Canvas? _myCanvas;
 
         private readonly FilePickerFileType _svgFiles = new("SVG Images")
         {
@@ -22,9 +23,20 @@ namespace VectorEditor.UI
             MimeTypes = ["image/svg+xml"]
         };
 
+        private Button? _activeToolButton;
+        private Control? _capturedControl;
+        private Point _initialMousePosition;
+        private bool _isDragging;
+        private int _layerCount;
+        private int _opacity = 100;
+        private IBrush _selectedColor = new SolidColorBrush(Colors.Black);
+
+        private LayerWidget? _selectedLayer;
+
         public MainWindow()
         {
             InitializeComponent();
+            _myCanvas = this.FindControl<Canvas>("MyCanvas");
         }
 
         private void ToggleThemeChange(object? sender, RoutedEventArgs e)
@@ -49,21 +61,78 @@ namespace VectorEditor.UI
 
         private void SelectColor(object? sender, RoutedEventArgs e)
         {
-            if (e.Source is Button { Background: not null } button)
-            {
-                UpdateColor(button.Background);
-            }
+            if (e.Source is not Button { Background: ISolidColorBrush brush }) return;
+            Color selectedColor = brush.Color;
+            UpdateColor(brush, selectedColor.R, selectedColor.G, selectedColor.B);
         }
 
-        private void UpdateColor(IBrush color)
+        private void UpdateColor(IBrush color, int r, int g, int b)
         {
             _selectedColor = color;
             SelectedColor.Background = color;
+            InputColorR.Text = r.ToString();
+            InputColorG.Text = g.ToString();
+            InputColorB.Text = b.ToString();
+        }
+
+        private void Color_InputChange(object? sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(InputColorR.Text, out int r))
+            {
+                r = Math.Clamp(r, 0, 255);
+            }
+            else
+            {
+                r = 0;
+            }
+
+            if (InputColorR.Text != r.ToString())
+            {
+                InputColorR.Text = r.ToString();
+                InputColorR.CaretIndex = InputColorR.Text.Length;
+            }
+
+            if (int.TryParse(InputColorG.Text, out int g))
+            {
+                g = Math.Clamp(g, 0, 255);
+            }
+            else
+            {
+                g = 0;
+            }
+
+            if (InputColorG.Text != g.ToString())
+            {
+                InputColorG.Text = g.ToString();
+                InputColorG.CaretIndex = InputColorG.Text.Length;
+            }
+
+            if (int.TryParse(InputColorB.Text, out int b))
+            {
+                b = Math.Clamp(b, 0, 255);
+            }
+            else
+            {
+                b = 0;
+            }
+
+            if (InputColorB.Text != b.ToString())
+            {
+                InputColorB.Text = b.ToString();
+                InputColorB.CaretIndex = InputColorB.Text.Length;
+            }
+
+            byte a = (byte)(_opacity / 100.0 * 255);
+            Color newColor = Color.FromArgb(a, (byte)r, (byte)g, (byte)b);
+    
+            var newBrush = new SolidColorBrush(newColor);
+            _selectedColor = newBrush;
+            SelectedColor.Background = newBrush;
         }
 
         private async void OpenFile(object? sender, RoutedEventArgs e)
         {
-            var topLevel = TopLevel.GetTopLevel(this);
+            var topLevel = GetTopLevel(this);
             if (topLevel == null) return;
             var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
@@ -72,10 +141,10 @@ namespace VectorEditor.UI
                 AllowMultiple = false
             });
             if (files.Count < 1) return;
-                await using var stream = await files[0].OpenReadAsync();
-                using var reader = new StreamReader(stream);
-                var svgContent = await reader.ReadToEndAsync();
-                System.Diagnostics.Debug.WriteLine(svgContent);
+            await using var stream = await files[0].OpenReadAsync();
+            using var reader = new StreamReader(stream);
+            var svgContent = await reader.ReadToEndAsync();
+            Debug.WriteLine(svgContent);
         }
 
         private void AddLayer(object? sender, RoutedEventArgs e)
@@ -94,6 +163,7 @@ namespace VectorEditor.UI
                 var oldBtn = _selectedLayer.FindDescendantOfType<Button>();
                 if (oldBtn != null) oldBtn.Background = Brushes.Transparent;
             }
+
             _selectedLayer = button.FindAncestorOfType<LayerWidget>();
             if (_selectedLayer != null)
             {
@@ -106,6 +176,110 @@ namespace VectorEditor.UI
             if (_selectedLayer == null) return;
             LayersStackPanel.Children.Remove(_selectedLayer);
             _selectedLayer = null;
+        }
+
+        private void Canvas_PointerWheelChanged(object? sender, PointerWheelEventArgs e)
+        {
+            if (_myCanvas?.RenderTransform is not MatrixTransform transform) return;
+            var matrix = transform.Matrix;
+            var scaleFactor = e.Delta.Y > 0 ? 1.1 : 0.9;
+            var point = e.GetPosition(_myCanvas);
+            matrix = MatrixHelper.ScaleAt(matrix, scaleFactor, scaleFactor, point.X, point.Y);
+            transform.Matrix = matrix;
+            e.Handled = true;
+        }
+
+        private void Canvas_PointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            var properties = e.GetCurrentPoint(this).Properties;
+            if (properties.IsLeftButtonPressed && sender is Border border)
+            {
+                _isDragging = true;
+                _initialMousePosition = e.GetPosition(border);
+                e.Pointer.Capture(border);
+                _capturedControl = border;
+            }
+        }
+
+        private void Canvas_PointerMoved(object? sender, PointerEventArgs e)
+        {
+            if (_isDragging && sender is Border border && _myCanvas?.RenderTransform is MatrixTransform transform &&
+                _activeToolButton?.Tag as string == "Hand")
+            {
+                var currentPosition = e.GetPosition(border);
+                var offset = currentPosition - _initialMousePosition;
+
+                var matrix = transform.Matrix;
+                matrix = MatrixHelper.Translate(matrix, offset.X, offset.Y);
+
+                transform.Matrix = matrix;
+                _initialMousePosition = currentPosition;
+            }
+        }
+
+        private void Canvas_PointerReleased(object? sender, PointerReleasedEventArgs e)
+        {
+            _isDragging = false;
+            if (_capturedControl == null) return;
+            e.Pointer.Capture(null);
+            _capturedControl = null;
+        }
+
+        private void Opacity_SliderChanged(object? sender, RoutedEventArgs e)
+        {
+            _opacity = (int)OpacitySlider.Value;
+            OpacityInput.Text = _opacity.ToString();
+        }
+
+        private void Opacity_PointerWheelChanged(object? sender, PointerWheelEventArgs e)
+        {
+            if (e.Delta.Y > 0 && _opacity < 100)
+            {
+                _opacity++;
+                OpacitySlider.Value = _opacity;
+                OpacityInput.Text = _opacity.ToString();
+            }
+            else if (e.Delta.Y < 0 && _opacity > 0)
+            {
+                _opacity--;
+                OpacitySlider.Value = _opacity;
+                OpacityInput.Text = _opacity.ToString();
+            }
+        }
+
+        private void Opacity_InputChange(object? sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(OpacityInput.Text, out int result))
+            {
+                _opacity = Math.Clamp(result, 0, 100);
+            }
+            else
+            {
+                _opacity = 0;
+            }
+
+            OpacitySlider.Value = _opacity;
+            string newText = _opacity.ToString();
+            if (OpacityInput.Text != newText)
+            {
+                OpacityInput.Text = newText;
+                OpacityInput.CaretIndex = OpacityInput.Text.Length;
+            }
+        }
+    }
+
+    public static class MatrixHelper
+    {
+        public static Matrix ScaleAt(Matrix matrix, double scaleX, double scaleY, double centerX, double centerY)
+        {
+            return matrix * Matrix.CreateTranslation(-centerX, -centerY)
+                          * Matrix.CreateScale(scaleX, scaleY)
+                          * Matrix.CreateTranslation(centerX, centerY);
+        }
+
+        public static Matrix Translate(Matrix matrix, double offsetX, double offsetY)
+        {
+            return matrix * Matrix.CreateTranslation(offsetX, offsetY);
         }
     }
 }
