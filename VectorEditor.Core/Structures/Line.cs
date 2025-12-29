@@ -10,6 +10,6 @@ public class Line(Point startPoint, Point endPoint, string color, int width) : I
     private int Width { get; set; } = width;
     public string Name => "Line";
     
-    public override string ToString() => $"Line from {StartPoint} to {EndPoint}";
+    public override string ToString() => $"Line from {StartPoint} to {EndPoint}, Color: {Color}, Width: {Width}px";
     
 }
