@@ -10,9 +10,6 @@ var layer2 = new Layer("Layer 2");
 rootLayer.Add(layer1);
 rootLayer.Add(layer2);
 
-var canvas1 = new List<IShape>();
-var canvas2 = new List<IShape>();
-
 var builder = new LineBuilder("black", 2)
     .SetStart(new Point(0, 0))
     .SetEnd(new Point(5, 5));
@@ -27,32 +24,26 @@ var line2Builder = new LineBuilder("green", 3)
 
 var cmdManager = new CommandManager();
 
-cmdManager.Execute(new AddShapeCommand(builder, canvas1));
-layer1.Add(canvas1[0]);
+cmdManager.Execute(new AddShapeCommand(builder, layer1));
 Console.WriteLine("Canvas after adding line to Layer 1:");
 rootLayer.ConsoleDisplay();
 Console.WriteLine();
 
-cmdManager.Execute(new AddShapeCommand(circleBuilder, canvas1));
-layer1.Add(canvas1[1]);
+cmdManager.Execute(new AddShapeCommand(circleBuilder, layer1));
 Console.WriteLine("Canvas after adding circle to Layer 1:");
 rootLayer.ConsoleDisplay();
 Console.WriteLine();
 
-cmdManager.Execute(new AddShapeCommand(line2Builder, canvas2));
-layer2.Add(canvas2[0]);
+cmdManager.Execute(new AddShapeCommand(line2Builder, layer2));
 Console.WriteLine("Canvas after adding line to Layer 2:");
 rootLayer.ConsoleDisplay();
 Console.WriteLine();
 
 cmdManager.Undo();
-layer2.Remove(canvas2[0]);
-canvas2.RemoveAt(canvas2.Count - 1);
 Console.WriteLine("Canvas after undo:");
 rootLayer.ConsoleDisplay();
 Console.WriteLine();
 
 cmdManager.Redo();
-layer2.Add(canvas2[0]);
 Console.WriteLine("Canvas after redo:");
 rootLayer.ConsoleDisplay();

@@ -3,19 +3,21 @@ using VectorEditor.Core.Composite;
 
 namespace VectorEditor.Core.Command;
 
-public class AddShapeCommand(IShapeBuilder builder, IList<IShape> canvas) : ICommand
+public class AddShapeCommand(IShapeBuilder builder, Layer targetLayer) : ICommand
 {
-    private IShape? _createdShape = null;
+    private IShape? _createdShape;
 
     public void Execute()
     {
         _createdShape = builder.Build();
-        canvas.Add(_createdShape);
+        targetLayer.Add(_createdShape);
     }
 
     public void Undo()
     {
         if (_createdShape != null)
-            canvas.Remove(_createdShape);
+        {
+            targetLayer.Remove(_createdShape);
+        }
     }
 }
