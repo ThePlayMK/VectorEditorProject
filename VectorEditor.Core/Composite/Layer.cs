@@ -7,6 +7,8 @@ public class Layer(string name) : ICanvas
     private string Name { get; set; } = name;
     private readonly List<ICanvas> _children = [];
     
+    public IEnumerable<ICanvas> GetChildren() => _children;
+    
     public void Add(ICanvas canvas)
     {
         _children.Add(canvas);
