@@ -1,3 +1,5 @@
+using VectorEditor.Core.Structures;
+
 namespace VectorEditor.Core.Composite;
 
 public class Layer(string name) : ICanvas
@@ -13,6 +15,12 @@ public class Layer(string name) : ICanvas
     public void Remove(ICanvas canvas)
     {
         _children.Remove(canvas);
+    }
+    
+    public bool IsWithinBounds(Point startPoint, Point oppositePoint)
+    {
+        return _children.Count != 0 && 
+               _children.Any(child => child.IsWithinBounds(startPoint, oppositePoint));
     }
 
 

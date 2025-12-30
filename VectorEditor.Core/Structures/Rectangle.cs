@@ -32,4 +32,17 @@ public class Rectangle : IShape
     {
         Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
     }
+
+    public bool IsWithinBounds(Point startPoint, Point oppositePoint)
+    {
+        // Sprawdzamy, czy prostokąty NIE są rozłączne.
+        // Dwa prostokąty nachodzą na siebie, jeśli:
+        // (Lewa krawędź A < Prawa krawędź B) ORAZ (Prawa krawędź A > Lewa krawędź B)
+        // ORAZ to samo dla osi Y.
+
+        var overlapX = StartPoint.X <= oppositePoint.X && OppositePoint.X >= startPoint.X;
+        var overlapY = StartPoint.Y <= oppositePoint.Y && OppositePoint.Y >= startPoint.Y;
+
+        return overlapX && overlapY;
+    }
 }

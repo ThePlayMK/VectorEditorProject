@@ -16,4 +16,14 @@ public class Line(Point startPoint, Point endPoint, string color, int width) : I
     {
         Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
     }
+
+    public bool IsWithinBounds(Point startPoint, Point oppositePoint)
+    {
+        return IsPointInside(StartPoint, startPoint, oppositePoint) && 
+               IsPointInside(EndPoint, startPoint, oppositePoint);
+    }
+    
+    
+    private static bool IsPointInside(Point p, Point tl, Point br) =>
+        p.X >= tl.X && p.X <= br.X && p.Y >= tl.Y && p.Y <= br.Y;
 }
