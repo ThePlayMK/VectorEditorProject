@@ -13,7 +13,7 @@ public class Rectangle : IShape
     private int Width { get; set; }
     public string Name => "Rectangle";
 
-    Rectangle(Point startPoint, Point oppositePoint, string contentColor, string contourColor, int width)
+    public Rectangle(Point startPoint, Point oppositePoint, string contentColor, string contourColor, int width)
     {
         StartPoint = startPoint;
         OppositePoint = oppositePoint;
