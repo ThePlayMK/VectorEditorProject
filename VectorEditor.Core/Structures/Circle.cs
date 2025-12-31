@@ -53,7 +53,7 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
         _radius = radius;
     }
     
-    public void SetPoints(List<Point> scaleMementoPoints)
+    public void SetPoints(List<Point> points)
     {
         throw new NotImplementedException();
     }

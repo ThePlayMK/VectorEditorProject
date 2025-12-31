@@ -35,27 +35,19 @@ public class Rectangle : IShape
     public int GetWidth() => _width;
     public Point GetStartPoint() => _startPoint;
     public Point GetOppositePoint() => _oppositePoint;
-    
-    public IEnumerable<Point> GetPoints()
-    {
-        return new List<Point> {_startPoint, _oppositePoint};
-    }
+    public IEnumerable<Point> GetPoints() => new List<Point> {_startPoint, _oppositePoint};
 
     // --- SETERY (Publiczne) ---
     public void SetPoints(List<Point> points)
     {
         if (IsBlocked) return;
-
-        // Sprawdzamy, czy dostaliśmy odpowiednią liczbę punktów (dla prostokąta to 2)
+        
         if (points.Count < 2)
         {
             return;
         }
         _startPoint = points[0];
         _oppositePoint = points[1];
-
-        // Bardzo ważne: po ręcznym ustawieniu punktów musimy 
-        // zaktualizować pomocnicze punkty (te od renderowania)
         UpdateHelperPoints();
     }
     

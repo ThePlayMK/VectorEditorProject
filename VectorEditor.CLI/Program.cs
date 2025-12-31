@@ -827,7 +827,7 @@ Console.WriteLine("\n>>> TEST 27: PRZESKALOWANIE PROSTOKĄTA <<<");
 
 var cmdManager = new CommandManager();
 var scaleLayer = new Layer("Scale Test Layer");
-var rectToScale = new Rectangle(new Point(10, 10), new Point(30, 30), "green", "black", 2);
+var rectToScale = new Line(new Point(10, 10), new Point(30, 30), "green",  2);
 
 scaleLayer.Add(rectToScale);
 

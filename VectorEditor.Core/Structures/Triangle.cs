@@ -30,10 +30,7 @@ public class Triangle(
     public Point GetFirstPoint() => _firstPoint;
     public Point GetSecondPoint() => _secondPoint;
     public Point GetThirdPoint() => _thirdPoint;
-    public IEnumerable<Point> GetPoints()
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerable<Point> GetPoints() => new List<Point> {_firstPoint, _secondPoint, _thirdPoint};
 
     // --- SETTERY (Z LOGIKĄ BLOKADY) ---
     public void SetContentColor(string color)
@@ -54,9 +51,17 @@ public class Triangle(
         _width = width;
     }
 
-    public void SetPoints(List<Point> scaleMementoPoints)
+    public void SetPoints(List<Point> points)
     {
-        throw new NotImplementedException();
+        if (IsBlocked) return;
+        
+        if (points.Count < 3)
+        {
+            return;
+        }
+        _firstPoint = points[0];
+        _secondPoint = points[1];
+        _thirdPoint = points[2];
     }
     
     // --- GEOMETRIA ---

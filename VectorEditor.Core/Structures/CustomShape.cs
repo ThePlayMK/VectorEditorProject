@@ -41,9 +41,19 @@ public class CustomShape(List<Point> points, string contentColor, string contour
         _width = width;
     }
     
-    public void SetPoints(List<Point> scaleMementoPoints)
+    public void SetPoints(List<Point> points)
     {
-        throw new NotImplementedException();
+        if (IsBlocked) return;
+
+        if (points.Count != _points.Count)
+        {
+            return;
+        }
+
+        for (var i = 0; i < points.Count; i++)
+        {
+            _points[i] = points[i];
+        }
     }
 
     // --- GEOMETRIA ---
