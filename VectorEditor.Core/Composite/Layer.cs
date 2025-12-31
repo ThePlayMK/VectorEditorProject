@@ -6,16 +6,29 @@ public class Layer(string name) : ICanvas
 {
     private string Name { get; set; } = name;
     private readonly List<ICanvas> _children = [];
+    public Layer? ParentLayer { get; set; }
     
     public IEnumerable<ICanvas> GetChildren() => _children;
     
     public void Add(ICanvas canvas)
     {
+        canvas.ParentLayer = this;
         _children.Add(canvas);
+    }
+    
+    public void Insert(int index, ICanvas element)
+    {
+        element.ParentLayer = this;
+        _children.Insert(index, element);
     }
     
     public void Remove(ICanvas canvas)
     {
+        if (!_children.Contains(canvas))
+        {
+            return;
+        }
+        canvas.ParentLayer = null;
         _children.Remove(canvas);
     }
     
@@ -25,6 +38,10 @@ public class Layer(string name) : ICanvas
                _children.Any(child => child.IsWithinBounds(startPoint, oppositePoint));
     }
 
+    public int GetIndexOf(ICanvas element)
+    {
+        return _children.IndexOf(element);
+    }
 
     public void ConsoleDisplay(int depth = 0)
     {

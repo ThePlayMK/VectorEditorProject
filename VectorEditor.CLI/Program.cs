@@ -162,6 +162,7 @@ rootLayer.ConsoleDisplay();
 */
 
 // --- TEST 6: ZAAWANSOWANE ZAZNACZENIE I STRATEGIA ---
+/*
 var rootLayer = new Layer("World");
 var headLayer = new Layer("Head Layer");
 var bodyLayer = new Layer("Body Layer");
@@ -284,3 +285,146 @@ cmdManager.Undo();
 
 Console.WriteLine("\nKońcowy stan całej sceny:");
 rootLayer.ConsoleDisplay();
+*/
+
+// --- TEST 12: USUWANIE POJEDYNCZEGO ELEMENTU PRZEZ STRATEGIĘ ---
+/*
+var rootLayer = new Layer("World");
+var testLayer = new Layer("Test Layer");
+rootLayer.Add(testLayer);
+
+var circle1 = new Circle(new Point(10, 10), 5, "red", "black", 1);
+var circle2 = new Circle(new Point(20, 20), 5, "blue", "black", 1);
+var line1 = new Line(new Point(30, 30), new Point(40, 40), "green", 2);
+
+testLayer.Add(circle1);
+testLayer.Add(circle2);
+testLayer.Add(line1);
+
+var cmdManager = new CommandManager();
+
+Console.WriteLine(">>> TEST 12: USUWANIE POJEDYNCZEGO ELEMENTU PRZEZ STRATEGIĘ <<<");
+Console.WriteLine("Stan początkowy:");
+testLayer.ConsoleDisplay();
+
+var removeStrategy = new VectorEditor.Core.Strategy.RemoveStrategy();
+var removeCircle1Cmd = new ApplyStrategyCommand(removeStrategy, circle1);
+cmdManager.Execute(removeCircle1Cmd);
+
+Console.WriteLine("\nStan po usunięciu circle1:");
+testLayer.ConsoleDisplay();
+
+Console.WriteLine("\nWykonuję UNDO:");
+cmdManager.Undo();
+
+Console.WriteLine("Stan po UNDO:");
+testLayer.ConsoleDisplay();
+
+// --- TEST 13: USUWANIE ZGRUPOWANYCH ELEMENTÓW PRZEZ STRATEGIĘ ---
+Console.WriteLine("\n>>> TEST 13: USUWANIE ZGRUPOWANYCH ELEMENTÓW PRZEZ STRATEGIĘ <<<");
+
+var bodyLayer = new Layer("Body Layer");
+rootLayer.Add(bodyLayer);
+
+bodyLayer.Add(new Rectangle(new Point(40, 70), new Point(60, 120), "blue", "black", 2));
+bodyLayer.Add(new Rectangle(new Point(10, 80), new Point(40, 90), "skin", "black", 2));
+bodyLayer.Add(new Rectangle(new Point(60, 80), new Point(90, 90), "skin", "black", 2));
+bodyLayer.Add(new Rectangle(new Point(40, 120), new Point(48, 160), "jeans", "black", 2));
+bodyLayer.Add(new Rectangle(new Point(52, 120), new Point(60, 160), "jeans", "black", 2));
+
+Console.WriteLine("Stan początkowy bodyLayer:");
+bodyLayer.ConsoleDisplay();
+
+var selectLegsCmd = new GroupCommand(bodyLayer, new Point(35, 115), new Point(65, 170));
+cmdManager.Execute(selectLegsCmd);
+
+Console.WriteLine("\nZnalezione elementy (nogi):");
+selectLegsCmd.DisplayResults();
+
+var removeGroupStrategy = new VectorEditor.Core.Strategy.RemoveStrategy();
+var removeGroupCmd = new ApplyStrategyCommand(removeGroupStrategy, selectLegsCmd.FoundElements);
+cmdManager.Execute(removeGroupCmd);
+
+Console.WriteLine("\nStan po usunięciu zgrupowanych elementów:");
+bodyLayer.ConsoleDisplay();
+
+Console.WriteLine("\nWykonuję UNDO:");
+cmdManager.Undo();
+
+Console.WriteLine("Stan po UNDO:");
+bodyLayer.ConsoleDisplay();
+
+// --- TEST 14: USUWANIE Z ZAGNIEŻDŻONYCH WARSTW PRZEZ STRATEGIĘ ---
+Console.WriteLine("\n>>> TEST 14: USUWANIE Z ZAGNIEŻDŻONYCH WARSTW PRZEZ STRATEGIĘ <<<");
+
+var parentLayer = new Layer("Parent");
+var childLayer1 = new Layer("Child1");
+var childLayer2 = new Layer("Child2");
+
+parentLayer.Add(childLayer1);
+parentLayer.Add(childLayer2);
+
+childLayer1.Add(new Circle(new Point(50, 50), 10, "yellow", "black", 1));
+childLayer1.Add(new Circle(new Point(70, 50), 10, "orange", "black", 1));
+childLayer2.Add(new Line(new Point(100, 100), new Point(150, 150), "purple", 3));
+
+Console.WriteLine("Stan początkowy:");
+parentLayer.ConsoleDisplay();
+
+var selectAllCmd = new GroupCommand(parentLayer, new Point(0, 0), new Point(200, 200));
+cmdManager.Execute(selectAllCmd);
+
+Console.WriteLine("\nZnalezione wszystkie elementy:");
+selectAllCmd.DisplayResults();
+
+var removeAllStrategy = new VectorEditor.Core.Strategy.RemoveStrategy();
+var removeAllCmd = new ApplyStrategyCommand(removeAllStrategy, selectAllCmd.FoundElements);
+cmdManager.Execute(removeAllCmd);
+
+Console.WriteLine("\nStan po usunięciu wszystkich elementów:");
+parentLayer.ConsoleDisplay();
+
+Console.WriteLine("\nWykonuję UNDO:");
+cmdManager.Undo();
+
+Console.WriteLine("Stan po UNDO:");
+parentLayer.ConsoleDisplay();
+
+// --- TEST 15: WIELOKROTNE USUWANIE I UNDO PRZEZ STRATEGIĘ ---
+Console.WriteLine("\n>>> TEST 15: WIELOKROTNE USUWANIE I UNDO PRZEZ STRATEGIĘ <<<");
+
+var multiLayer = new Layer("Multi Layer");
+var shape1 = new Triangle(new Point(10, 10), new Point(20, 10), new Point(15, 20), "red", "black", 1);
+var shape2 = new Triangle(new Point(30, 10), new Point(40, 10), new Point(35, 20), "green", "black", 1);
+var shape3 = new Triangle(new Point(50, 10), new Point(60, 10), new Point(55, 20), "blue", "black", 1);
+
+multiLayer.Add(shape1);
+multiLayer.Add(shape2);
+multiLayer.Add(shape3);
+
+Console.WriteLine("Stan początkowy:");
+multiLayer.ConsoleDisplay();
+
+var removeStrategy1 = new VectorEditor.Core.Strategy.RemoveStrategy();
+var remove1 = new ApplyStrategyCommand(removeStrategy1, shape1);
+var removeStrategy2 = new VectorEditor.Core.Strategy.RemoveStrategy();
+var remove2 = new ApplyStrategyCommand(removeStrategy2, shape2);
+
+cmdManager.Execute(remove1);
+Console.WriteLine("\nPo usunięciu shape1:");
+multiLayer.ConsoleDisplay();
+
+cmdManager.Execute(remove2);
+Console.WriteLine("\nPo usunięciu shape2:");
+multiLayer.ConsoleDisplay();
+
+Console.WriteLine("\nWykonuję pierwsze UNDO:");
+cmdManager.Undo();
+multiLayer.ConsoleDisplay();
+
+Console.WriteLine("\nWykonuję drugie UNDO:");
+cmdManager.Undo();
+multiLayer.ConsoleDisplay();
+
+
+*/

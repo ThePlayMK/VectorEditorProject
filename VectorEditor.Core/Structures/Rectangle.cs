@@ -11,6 +11,7 @@ public class Rectangle : IShape
     public string ContentColor { get; set; }
     public string ContourColor { get; set; }
     private int Width { get; set; }
+    public Layer? ParentLayer { get; set; }
     public string Name => "Rectangle";
 
     public Rectangle(Point startPoint, Point oppositePoint, string contentColor, string contourColor, int width)

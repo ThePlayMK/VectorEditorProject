@@ -9,6 +9,7 @@ public class CustomShape(List<Point> points, string contentColor, string contour
     public string ContourColor { get; set; } = contourColor;
     private int Width { get; set; } = width;
     public string Name => "Custom";
+    public Layer? ParentLayer { get; set; }
 
     public override string ToString()
     {
