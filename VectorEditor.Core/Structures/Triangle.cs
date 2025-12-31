@@ -31,6 +31,11 @@ public class Triangle(
     public Point GetSecondPoint() => _secondPoint;
     public Point GetThirdPoint() => _thirdPoint;
     public IEnumerable<Point> GetPoints() => new List<Point> {_firstPoint, _secondPoint, _thirdPoint};
+    
+    public double GetMinX() => Math.Min(_firstPoint.X, Math.Min(_secondPoint.X, _thirdPoint.X));
+    public double GetMaxX() => Math.Max(_firstPoint.X, Math.Max(_secondPoint.X, _thirdPoint.X));
+    public double GetMinY() => Math.Min(_firstPoint.Y, Math.Min(_secondPoint.Y, _thirdPoint.Y));
+    public double GetMaxY() => Math.Max(_firstPoint.Y, Math.Max(_secondPoint.Y, _thirdPoint.Y));
 
     // --- SETTERY (Z LOGIKĄ BLOKADY) ---
     public void SetContentColor(string color)
@@ -75,32 +80,89 @@ public class Triangle(
 
     public void Scale(ScaleHandle handle, Point newPos)
     {
-        throw new NotImplementedException();
+        if (IsBlocked) return;
+
+        var left = GetMinX();
+        var right = GetMaxX();
+        var top = GetMinY();
+        var bottom = GetMaxY();
+
+        // 1. Wyznaczamy Pivot (punkt, który się nie rusza)
+        var pivot = handle switch
+        {
+            ScaleHandle.TopLeft => new Point(right, bottom),
+            ScaleHandle.Top => new Point(left, bottom),
+            ScaleHandle.TopRight => new Point(left, bottom),
+            ScaleHandle.Right => new Point(left, top),
+            ScaleHandle.BottomRight => new Point(left, top),
+            ScaleHandle.Bottom => new Point(left, top),
+            ScaleHandle.BottomLeft => new Point(right, top),
+            ScaleHandle.Left => new Point(right, top),
+            _ => new Point(left, top)
+        };
+
+        // 2. Obliczamy stare i nowe wymiary Bounding Boxa
+        var oldW = Math.Max(1, right - left);
+        var oldH = Math.Max(1, bottom - top);
+        var newW = oldW;
+        var newH = oldH;
+
+        switch (handle)
+        {
+            case ScaleHandle.TopLeft:
+                newW = right - newPos.X;
+                newH = bottom - newPos.Y;
+                break;
+            case ScaleHandle.Top: 
+                newH = bottom - newPos.Y; 
+                break;
+            case ScaleHandle.TopRight:
+                newW = newPos.X - left;
+                newH = bottom - newPos.Y;
+                break;
+            case ScaleHandle.Right: 
+                newW = newPos.X - left; 
+                break;
+            case ScaleHandle.BottomRight:
+                newW = newPos.X - left;
+                newH = newPos.Y - top;
+                break;
+            case ScaleHandle.Bottom:
+                newH = newPos.Y - top; 
+                break;
+            case ScaleHandle.BottomLeft:
+                newW = right - newPos.X;
+                newH = newPos.Y - top;
+                break;
+            case ScaleHandle.Left: 
+                newW = right - newPos.X; 
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(handle), handle, null);
+        }
+
+        var sx = newW / oldW;
+        var sy = newH / oldH;
+
+        // 3. Wykonujemy transformację
+        ScaleTransform(pivot, sx, sy);
     }
 
     public void ScaleTransform(Point pivot, double sx, double sy)
     {
-        throw new NotImplementedException();
+        if (IsBlocked) return;
+
+        _firstPoint = TransformPoint(_firstPoint, pivot, sx, sy);
+        _secondPoint = TransformPoint(_secondPoint, pivot, sx, sy);
+        _thirdPoint = TransformPoint(_thirdPoint, pivot, sx, sy);
     }
 
-    public double GetMinX()
+    private static Point TransformPoint(Point p, Point pivot, double sx, double sy)
     {
-        throw new NotImplementedException();
-    }
-
-    public double GetMaxX()
-    {
-        throw new NotImplementedException();
-    }
-
-    public double GetMinY()
-    {
-        throw new NotImplementedException();
-    }
-
-    public double GetMaxY()
-    {
-        throw new NotImplementedException();
+        return new Point(
+            pivot.X + (p.X - pivot.X) * sx,
+            pivot.Y + (p.Y - pivot.Y) * sy
+        );
     }
 
     public bool IsWithinBounds(Point startPoint, Point oppositePoint)

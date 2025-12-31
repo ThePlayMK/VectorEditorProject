@@ -143,7 +143,72 @@ public class CustomShape(List<Point> points, string contentColor, string contour
     
     public void Scale(ScaleHandle handle, Point newPos)
     {
-        throw new NotImplementedException();
+        if (IsBlocked) return;
+
+        var left = GetMinX();
+        var right = GetMaxX();
+        var top = GetMinY();
+        var bottom = GetMaxY();
+
+        // 1. Wyznaczamy Pivot (punkt, który się nie rusza)
+        var pivot = handle switch
+        {
+            ScaleHandle.TopLeft => new Point(right, bottom),
+            ScaleHandle.Top => new Point(left, bottom),
+            ScaleHandle.TopRight => new Point(left, bottom),
+            ScaleHandle.Right => new Point(left, top),
+            ScaleHandle.BottomRight => new Point(left, top),
+            ScaleHandle.Bottom => new Point(left, top),
+            ScaleHandle.BottomLeft => new Point(right, top),
+            ScaleHandle.Left => new Point(right, top),
+            _ => new Point(left, top)
+        };
+
+        // 2. Obliczamy stare i nowe wymiary Bounding Boxa
+        var oldW = Math.Max(1, right - left);
+        var oldH = Math.Max(1, bottom - top);
+        var newW = oldW;
+        var newH = oldH;
+
+        switch (handle)
+        {
+            case ScaleHandle.TopLeft:
+                newW = right - newPos.X;
+                newH = bottom - newPos.Y;
+                break;
+            case ScaleHandle.Top: 
+                newH = bottom - newPos.Y; 
+                break;
+            case ScaleHandle.TopRight:
+                newW = newPos.X - left;
+                newH = bottom - newPos.Y;
+                break;
+            case ScaleHandle.Right: 
+                newW = newPos.X - left; 
+                break;
+            case ScaleHandle.BottomRight:
+                newW = newPos.X - left;
+                newH = newPos.Y - top;
+                break;
+            case ScaleHandle.Bottom:
+                newH = newPos.Y - top; 
+                break;
+            case ScaleHandle.BottomLeft:
+                newW = right - newPos.X;
+                newH = newPos.Y - top;
+                break;
+            case ScaleHandle.Left: 
+                newW = right - newPos.X; 
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(handle), handle, null);
+        }
+
+        var sx = newW / oldW;
+        var sy = newH / oldH;
+
+        // 3. Wykonujemy transformację
+        ScaleTransform(pivot, sx, sy);
     }
 
     public void ScaleTransform(Point pivot, double sx, double sy)

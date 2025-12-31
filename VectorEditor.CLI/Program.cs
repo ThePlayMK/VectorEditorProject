@@ -822,12 +822,13 @@ cmdManager.Execute(addSuccessCmd);
 Console.WriteLine("\nStan warstwy po odblokowaniu i dodaniu:");
 lockedLayer.ConsoleDisplay();*/
 
-// --- TEST 27: PRZESKALOWANIE PROSTOKĄTA ---
+// --- TEST 27: PRZESKALOWANIE PROSTOKĄTA LUB LINII---
+/*
 Console.WriteLine("\n>>> TEST 27: PRZESKALOWANIE PROSTOKĄTA <<<");
 
 var cmdManager = new CommandManager();
 var scaleLayer = new Layer("Scale Test Layer");
-var rectToScale = new Line(new Point(10, 10), new Point(30, 30), "green",  2);
+var rectToScale = new Rectangle(new Point(10, 10), new Point(30, 30), "green", "black", 2);
 
 scaleLayer.Add(rectToScale);
 
@@ -859,4 +860,49 @@ Console.WriteLine("Stan po REDO (prostokąt powinien być znowu przeskalowany):"
 scaleLayer.ConsoleDisplay();
 
 Console.WriteLine("\n>>> KONIEC TESTU PRZESKALOWANIA <<<");
+
+*/
+
+// --- TEST 28: PRZESKALOWANIE TRÓJKĄTA Z KRAWĘDZIAMI RÓWNOLEGŁYMI DO OSI ---
+Console.WriteLine("\n>>> TEST 28: PRZESKALOWANIE TRÓJKĄTA <<<");
+
+var cmdManager = new CommandManager();
+var triangleLayer = new Layer("Triangle Scale Test Layer");
+// Trójkąt prostokątny: dwie krawędzie równoległe do osi
+// Krawędź pozioma: (10, 30) do (40, 30)
+// Krawędź pionowa: (10, 10) do (10, 30)
+// Przekątna: (10, 10) do (40, 30)
+var triangleToScale = new Triangle(new Point(10, 10), new Point(40, 30), new Point(10, 30), "purple", "black", 2);
+
+triangleLayer.Add(triangleToScale);
+
+Console.WriteLine("Stan początkowy:");
+triangleLayer.ConsoleDisplay();
+
+// Przeskalowujemy trójkąt - przesuwamy prawy dolny róg do (60, 50)
+var scaleTriangleStrategy = new ScaleStrategy(ScaleHandle.BottomRight, new Point(60, 50));
+var scaleTriangleCmd = new ApplyStrategyCommand(scaleTriangleStrategy, triangleToScale);
+
+Console.WriteLine("\nPrzeskaluję trójkąt (przesuwam BottomRight do (60, 50))...");
+cmdManager.Execute(scaleTriangleCmd);
+
+Console.WriteLine("Stan po przeskalowaniu:");
+triangleLayer.ConsoleDisplay();
+
+// Test UNDO
+Console.WriteLine("\nWykonuję UNDO...");
+cmdManager.Undo();
+
+Console.WriteLine("Stan po UNDO (trójkąt powinien wrócić do pierwotnych wymiarów):");
+triangleLayer.ConsoleDisplay();
+
+// Test REDO
+Console.WriteLine("\nWykonuję REDO...");
+cmdManager.Redo();
+
+Console.WriteLine("Stan po REDO (trójkąt powinien być znowu przeskalowany):");
+triangleLayer.ConsoleDisplay();
+
+Console.WriteLine("\n>>> KONIEC TESTU PRZESKALOWANIA TRÓJKĄTA <<<");
+
 

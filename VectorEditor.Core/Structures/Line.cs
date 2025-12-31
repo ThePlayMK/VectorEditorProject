@@ -104,22 +104,30 @@ public class Line(Point startPoint, Point endPoint, string contourColor, int wid
                 newW = right - newPos.X;
                 newH = bottom - newPos.Y;
                 break;
-            case ScaleHandle.Top: newH = bottom - newPos.Y; break;
+            case ScaleHandle.Top: 
+                newH = bottom - newPos.Y; 
+                break;
             case ScaleHandle.TopRight:
                 newW = newPos.X - left;
                 newH = bottom - newPos.Y;
                 break;
-            case ScaleHandle.Right: newW = newPos.X - left; break;
+            case ScaleHandle.Right: 
+                newW = newPos.X - left; 
+                break;
             case ScaleHandle.BottomRight:
                 newW = newPos.X - left;
                 newH = newPos.Y - top;
                 break;
-            case ScaleHandle.Bottom: newH = newPos.Y - top; break;
+            case ScaleHandle.Bottom:
+                newH = newPos.Y - top; 
+                break;
             case ScaleHandle.BottomLeft:
                 newW = right - newPos.X;
                 newH = newPos.Y - top;
                 break;
-            case ScaleHandle.Left: newW = right - newPos.X; break;
+            case ScaleHandle.Left: 
+                newW = right - newPos.X; 
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(handle), handle, null);
         }
