@@ -14,12 +14,9 @@ public class MoveCanvasStrategy(int dx, int dy) : IModificationStrategy
 
     public void Undo(ICanvas target, object? memento)
     {
-        if (memento is List<ICanvas> affectedElements)
+        if (memento is true)
         {
-            foreach (var element in affectedElements)
-            {
-                element.Move(-dx, -dy);
-            }
+            target.Move(-dx, -dy);
         }
     }
 }

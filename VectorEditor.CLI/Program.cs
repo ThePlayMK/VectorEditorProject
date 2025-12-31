@@ -6,7 +6,8 @@ using VectorEditor.Core.Structures;
 Console.WriteLine("Hello, World!");
 
 // test buildera
-/*var rootLayer = new Layer("Root Canvas");
+/*
+var rootLayer = new Layer("Root Canvas");
 var layer1 = new Layer("Layer 1");
 var layer2 = new Layer("Layer 2");
 
@@ -78,11 +79,12 @@ testLayer.Add(lineOutside);
 // Nie powinien złapać:
 // - LineOutside
 var p1 = new Point(15, 15);
-var p2 = new Point(100, 99);
+var p2 = new Point(100, 100);
 
 Console.WriteLine("=== URUCHOMIENIE TESTU ZAZNACZANIA ===");
 var groupCmd = new GroupCommand(testLayer, p1, p2);
 groupCmd.Execute();
+groupCmd.DisplayResults();
 
 // 3. Weryfikacja wizualna całego Layera
 Console.WriteLine("=== PEŁNA ZAWARTOŚĆ LAYERA (DLA PORÓWNANIA) ===");
@@ -133,7 +135,7 @@ selectAll.DisplayResults();
 // --- TEST 3: ZAZNACZENIE TYLKO PRAWEJ RĘKI ---
 // Obszar od (70, 75) do (100, 100)
 Console.WriteLine("\n>>> TEST 3: ZAZNACZENIE PRAWEJ RĘKI <<<");
-var selectHand = new GroupCommand(rootLayer, new Point(70, 75), new Point(100, 100));
+var selectHand = new GroupCommand(bodyLayer, new Point(70, 75), new Point(100, 100));
 cmdManager.Execute(selectHand);
 selectHand.DisplayResults();
 
@@ -305,7 +307,7 @@ Console.WriteLine(">>> TEST 12: USUWANIE POJEDYNCZEGO ELEMENTU PRZEZ STRATEGIĘ 
 Console.WriteLine("Stan początkowy:");
 testLayer.ConsoleDisplay();
 
-var removeStrategy = new VectorEditor.Core.Strategy.RemoveStrategy();
+var removeStrategy = new RemoveStrategy();
 var removeCircle1Cmd = new ApplyStrategyCommand(removeStrategy, circle1);
 cmdManager.Execute(removeCircle1Cmd);
 
@@ -339,7 +341,7 @@ cmdManager.Execute(selectLegsCmd);
 Console.WriteLine("\nZnalezione elementy (nogi):");
 selectLegsCmd.DisplayResults();
 
-var removeGroupStrategy = new VectorEditor.Core.Strategy.RemoveStrategy();
+var removeGroupStrategy = new RemoveStrategy();
 var removeGroupCmd = new ApplyStrategyCommand(removeGroupStrategy, selectLegsCmd.FoundElements);
 cmdManager.Execute(removeGroupCmd);
 
@@ -375,7 +377,7 @@ cmdManager.Execute(selectAllCmd);
 Console.WriteLine("\nZnalezione wszystkie elementy:");
 selectAllCmd.DisplayResults();
 
-var removeAllStrategy = new VectorEditor.Core.Strategy.RemoveStrategy();
+var removeAllStrategy = new RemoveStrategy();
 var removeAllCmd = new ApplyStrategyCommand(removeAllStrategy, selectAllCmd.FoundElements);
 cmdManager.Execute(removeAllCmd);
 
@@ -403,9 +405,9 @@ multiLayer.Add(shape3);
 Console.WriteLine("Stan początkowy:");
 multiLayer.ConsoleDisplay();
 
-var removeStrategy1 = new VectorEditor.Core.Strategy.RemoveStrategy();
+var removeStrategy1 = new RemoveStrategy();
 var remove1 = new ApplyStrategyCommand(removeStrategy1, shape1);
-var removeStrategy2 = new VectorEditor.Core.Strategy.RemoveStrategy();
+var removeStrategy2 = new RemoveStrategy();
 var remove2 = new ApplyStrategyCommand(removeStrategy2, shape2);
 
 cmdManager.Execute(remove1);
@@ -423,8 +425,6 @@ multiLayer.ConsoleDisplay();
 Console.WriteLine("\nWykonuję drugie UNDO:");
 cmdManager.Undo();
 multiLayer.ConsoleDisplay();
-
-
 */
 
 // --- TEST 16: BLOKOWANIE POJEDYNCZEGO KSZTAŁTU PRZEZ STRATEGIĘ ---

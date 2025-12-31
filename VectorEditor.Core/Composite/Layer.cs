@@ -5,13 +5,16 @@ namespace VectorEditor.Core.Composite;
 
 public class Layer(string name) : ICanvas
 {
-    public string Name { get; set; } = name;
     private readonly List<ICanvas> _children = [];
     public Layer? ParentLayer { get; set; }
-    public IEnumerable<ICanvas> GetChildren() => _children;
     public bool IsBlocked { get; set; }
     public bool IsVisible { get; set; } = true;
     
+    // --- GETTERY ---
+    public string GetName() => name;
+    public IEnumerable<ICanvas> GetChildren() => _children;
+    
+    // --- ZARZĄDZANIE STRUKTURĄ ---
     public void Add(ICanvas canvas)
     {
         if (IsBlocked) return;
@@ -53,10 +56,10 @@ public class Layer(string name) : ICanvas
     public void Scale(ScaleHandle handle, Point newPos)
     {
         if (IsBlocked) return;
-        foreach (var child in _children)
+        /*foreach (var child in _children)
         {
             child.Scale(handle, newPos);
-        }
+        }*/
     }
 
     public bool IsWithinBounds(Point startPoint, Point oppositePoint)
@@ -74,11 +77,11 @@ public class Layer(string name) : ICanvas
     {
         if (!IsVisible) 
         {
-            Console.WriteLine(new string('-', depth) + "Layer: " + Name + " [HIDDEN]");
+            Console.WriteLine(new string('-', depth) + "Layer: " + name + " [HIDDEN]");
             return; 
         }
         
-        Console.WriteLine(new string('-', depth) + Name);
+        Console.WriteLine(new string('-', depth) + name);
         foreach (var child in _children)
         {
             child.ConsoleDisplay(depth + 2);
