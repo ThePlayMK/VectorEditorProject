@@ -3,6 +3,11 @@ namespace VectorEditor.Core.Composite;
 public interface IShape : ICanvas
 {
     string Name { get; }
-    string ContourColor { get; set;}
-    string ContentColor { get; set;}
+    public void SetContentColor(string newColor);
+    public void SetContourColor(string newColor);
+    public void SetWidth(int width);
+    public string GetContentColor();
+    public string GetContourColor();
+    public int GetWidth();
+    
 }

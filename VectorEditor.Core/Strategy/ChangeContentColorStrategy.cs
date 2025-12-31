@@ -18,16 +18,12 @@ public class ChangeContentColorStrategy(string newColor) : IModificationStrategy
         {
             return;
         }
-        
+
         switch (target)
         {
-            case Line line: // linia ma tylko kontur, wybrałem że jeżeli zmieniamy content to kontur zostaje zmieniony, inne rozwiązanie to żeby nic się nie działo
-                memento[line] = line.ContourColor;
-                line.ContourColor = newColor;
-                break;
             case IShape shape:
-                memento[shape] = shape.ContentColor;
-                shape.ContentColor = newColor;
+                memento[shape] = shape.GetContentColor();
+                shape.SetContentColor(newColor);
                 break;
             case Layer layer:
             {
@@ -40,7 +36,7 @@ public class ChangeContentColorStrategy(string newColor) : IModificationStrategy
             }
         }
     }
-    
+
     public void Undo(ICanvas target, object? memento)
     {
         if (memento is not Dictionary<IShape, string> oldColors || oldColors.Count == 0)
@@ -48,14 +44,7 @@ public class ChangeContentColorStrategy(string newColor) : IModificationStrategy
 
         foreach (var kvp in oldColors)
         {
-            if (kvp.Key is Line line) // to samo co w ApplyRecursive
-            {
-                line.ContourColor = kvp.Value;
-            }
-            else
-            {
-                kvp.Key.ContentColor = kvp.Value;
-            }
+            kvp.Key.SetContentColor(kvp.Value);
         }
     }
 }

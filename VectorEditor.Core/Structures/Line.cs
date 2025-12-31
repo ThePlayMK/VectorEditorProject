@@ -1,48 +1,76 @@
 using VectorEditor.Core.Composite;
+using VectorEditor.Core.Strategy;
 
 namespace VectorEditor.Core.Structures;
 
 public class Line(Point startPoint, Point endPoint, string contourColor, int width) : IShape
 {
-    private Point StartPoint { get; set; } = startPoint;
-    private Point EndPoint { get; set; } = endPoint;
-    public string ContourColor { get; set; } = contourColor;
-    public string ContentColor { get; set; } = string.Empty;
-    private int Width { get; set; } = width;
-    public string Name => "Line";
+    private Point _startPoint = startPoint;
+    private Point _endPoint = endPoint;
+    private string _contourColor = contourColor;
+    private int _width = width;
+
     public Layer? ParentLayer { get; set; }
-    public bool IsBlocked { get; set; } 
+    public bool IsBlocked { get; set; }
     public bool IsVisible { get; set; } = true;
+    public string Name => "Line";
     
-    public override string ToString() => 
-        $"Line from {StartPoint} to {EndPoint}, ContourColor: {ContourColor}, Width: {Width}px";
-    public void ConsoleDisplay(int depth = 0)
-    {
-        if (!IsVisible) return;
-        Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
-    }
+    // --- GETTERY ---
+    // Linia nie ma ContentColor, ale zwracamy ContourColor, by nie psuć generycznych operacji
+    public string GetContentColor() => _contourColor;
+    public string GetContourColor() => _contourColor;
+    public int GetWidth() => _width;
+    public Point GetStartPoint() => _startPoint;
+    public Point GetEndPoint() => _endPoint;
     
-    public void Move(int dx, int dy)
+    // --- SETTERY (Z LOGIKĄ BLOKADY) ---
+    public void SetContentColor(string color)
     {
         if (IsBlocked) return;
-        StartPoint = new Point(StartPoint.X + dx, StartPoint.Y + dy);
-        EndPoint = new Point(EndPoint.X + dx, EndPoint.Y + dy);
+        // Zgodnie z logiką: zmiana contentu linii zmienia jej kontur
+        _contourColor = color;
     }
 
-    public bool IsWithinBounds(Point startPoint, Point oppositePoint)
+    public void SetContourColor(string color)
     {
-        // NORMALIZACJA ZAZNACZENIA
-        var tl = new Point(Math.Min(startPoint.X, oppositePoint.X), Math.Min(startPoint.Y, oppositePoint.Y));
-        var br = new Point(Math.Max(startPoint.X, oppositePoint.X), Math.Max(startPoint.Y, oppositePoint.Y));
-        
-        // 1. Sprawdź czy którykolwiek z końców linii jest wewnątrz prostokąta
-        if (IsPointInRect(StartPoint, tl, br) || IsPointInRect(EndPoint, tl, br))
-            return true;
-
-        // 2. Sprawdź czy linia przecina którąkolwiek z krawędzi prostokąta
-        return LineIntersectsRect(StartPoint, EndPoint, tl, br);
+        if (IsBlocked) return;
+        _contourColor = color;
     }
 
+    public void SetWidth(int width)
+    {
+        if (IsBlocked) return;
+        _width = width;
+    }
+
+    // --- GEOMETRIA ---
+    
+    public void Move(int dx, int dy)
+        {
+            if (IsBlocked) return;
+            _startPoint = new Point(_startPoint.X + dx, _startPoint.Y + dy);
+            _endPoint = new Point(_endPoint.X + dx, _endPoint.Y + dy);
+        }
+    
+    public void Scale(ScaleHandle handle, Point newPos)
+    {
+        throw new NotImplementedException();
+    }
+    
+    public bool IsWithinBounds(Point startPoint, Point oppositePoint)
+        {
+            // NORMALIZACJA ZAZNACZENIA
+            var tl = new Point(Math.Min(startPoint.X, oppositePoint.X), Math.Min(startPoint.Y, oppositePoint.Y));
+            var br = new Point(Math.Max(startPoint.X, oppositePoint.X), Math.Max(startPoint.Y, oppositePoint.Y));
+            
+            // 1. Sprawdź czy którykolwiek z końców linii jest wewnątrz prostokąta
+            if (IsPointInRect(_startPoint, tl, br) || IsPointInRect(_endPoint, tl, br))
+                return true;
+    
+            // 2. Sprawdź czy linia przecina którąkolwiek z krawędzi prostokąta
+            return LineIntersectsRect(_startPoint, _endPoint, tl, br);
+        }
+    
     private static bool IsPointInRect(Point p, Point tl, Point br) =>
         p.X >= tl.X && p.X <= br.X && p.Y >= tl.Y && p.Y <= br.Y;
 
@@ -56,15 +84,25 @@ public class Line(Point startPoint, Point endPoint, string contourColor, int wid
     }
 
     private static bool LineIntersectsLine(Point a1, Point a2, Point b1, Point b2)
+        {
+            // Algorytm CCW (Counter-Clockwise) dla przecięć odcinków
+            var d = (a2.X - a1.X) * (b2.Y - b1.Y) - (a2.Y - a1.Y) * (b2.X - b1.X);
+            if (d == 0) return false; // Równoległe
+    
+            var u = ((b1.X - a1.X) * (b2.Y - b1.Y) - (b1.Y - a1.Y) * (b2.X - b1.X)) / d;
+            var v = ((b1.X - a1.X) * (a2.Y - a1.Y) - (b1.Y - a1.Y) * (a2.X - a1.X)) / d;
+    
+            return u is >= 0 and <= 1 && 
+                   v is >= 0 and <= 1;
+        }
+    
+    public override string ToString() => 
+        $"Line from {_startPoint} to {_endPoint}, ContourColor: {_contourColor}, Width: {_width}px";
+
+    public void ConsoleDisplay(int depth = 0)
     {
-        // Algorytm CCW (Counter-Clockwise) dla przecięć odcinków
-        var d = (a2.X - a1.X) * (b2.Y - b1.Y) - (a2.Y - a1.Y) * (b2.X - b1.X);
-        if (d == 0) return false; // Równoległe
-
-        var u = ((b1.X - a1.X) * (b2.Y - b1.Y) - (b1.Y - a1.Y) * (b2.X - b1.X)) / d;
-        var v = ((b1.X - a1.X) * (a2.Y - a1.Y) - (b1.Y - a1.Y) * (a2.X - a1.X)) / d;
-
-        return u is >= 0 and <= 1 && 
-               v is >= 0 and <= 1;
+        if (!IsVisible) return;
+        Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
     }
+    
 }

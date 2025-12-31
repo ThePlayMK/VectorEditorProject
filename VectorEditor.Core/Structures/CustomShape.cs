@@ -1,38 +1,60 @@
 using VectorEditor.Core.Composite;
+using VectorEditor.Core.Strategy;
 
 namespace VectorEditor.Core.Structures;
 
 public class CustomShape(List<Point> points, string contentColor, string contourColor, int width) : IShape
 {
-    private List<Point> Points { get; set; } = points;
-    public string ContentColor { get; set; } = contentColor;
-    public string ContourColor { get; set; } = contourColor;
-    private int Width { get; set; } = width;
-    public string Name => "Custom";
-    public Layer? ParentLayer { get; set; }
-    public bool IsBlocked { get; set; } 
-    public bool IsVisible { get; set; } = true;
+    private readonly List<Point> _points = points;
+    private string _contentColor = contentColor;
+    private string _contourColor = contourColor;
+    private int _width = width;
 
-    public override string ToString()
+    public Layer? ParentLayer { get; set; }
+    public bool IsBlocked { get; set; }
+    public bool IsVisible { get; set; } = true;
+    public string Name => "CustomShape";
+    
+    // --- GETTERY ---
+    public string GetContentColor() => _contentColor;
+    public string GetContourColor() => _contourColor;
+    public int GetWidth() => _width;
+    public IEnumerable<Point> GetPoints() => _points;
+
+    // --- SETTERY (Z LOGIKĄ BLOKADY) ---
+    public void SetContentColor(string color)
     {
-        var pointsStr = string.Join(",\n", Points.Select(p => p.ToString()));
-        return
-            $"Custom shape with points: [{pointsStr}], Content: {ContentColor}, Contour: {ContourColor}, Width: {Width}px";
+        if (IsBlocked) return;
+        _contentColor = color;
     }
 
+    public void SetContourColor(string color)
+    {
+        if (IsBlocked) return;
+        _contourColor = color;
+    }
+
+    public void SetWidth(int width)
+    {
+        if (IsBlocked) return;
+        _width = width;
+    }
+    
+    public override string ToString()
+    {
+        var pointsStr = string.Join(",\n", _points.Select(p => p.ToString()));
+        return
+            $"Custom shape with points: [{pointsStr}], Content: {_contentColor}, Contour: {_contourColor}, Width: {_width}px";
+    }
+
+    // --- GEOMETRIA ---
     public void Move(int dx, int dy)
     {
         if (IsBlocked) return;
-        for (var i = 0; i < Points.Count; i++)
+        for (var i = 0; i < _points.Count; i++)
         {
-            Points[i] = new Point(Points[i].X + dx, Points[i].Y + dy);
+            _points[i] = new Point(_points[i].X + dx, _points[i].Y + dy);
         }
-    }
-    
-    public void ConsoleDisplay(int depth = 0)
-    {
-        if (!IsVisible) return;
-        Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
     }
 
     public bool IsWithinBounds(Point startPoint, Point oppositePoint)
@@ -42,13 +64,13 @@ public class CustomShape(List<Point> points, string contentColor, string contour
         startPoint = h1;
         oppositePoint = h2;
 
-        if (Points.Count < 2)
+        if (_points.Count < 2)
         {
             return false;
         }
 
         // 1. Sprawdź, czy jakikolwiek punkt kształtu jest wewnątrz zaznaczenia
-        if (Points.Any(p =>
+        if (_points.Any(p =>
                 p.X >= startPoint.X && p.X <= oppositePoint.X && 
                 p.Y >= startPoint.Y && p.Y <= oppositePoint.Y))
         {
@@ -56,10 +78,10 @@ public class CustomShape(List<Point> points, string contentColor, string contour
         }
 
         // 2. Sprawdź przecięcia krawędzi (w tym domykającej ostatni z pierwszym)
-        for (var i = 0; i < Points.Count; i++)
+        for (var i = 0; i < _points.Count; i++)
         {
-            var pStart = Points[i];
-            var pEnd = Points[(i + 1) % Points.Count]; // To zapewnia "niewidzialną krawędź" domykającą
+            var pStart = _points[i];
+            var pEnd = _points[(i + 1) % _points.Count]; // To zapewnia "niewidzialną krawędź" domykającą
 
             if (LineIntersectsRect(pStart, pEnd, startPoint, oppositePoint))
                 return true;
@@ -69,7 +91,7 @@ public class CustomShape(List<Point> points, string contentColor, string contour
         // (Obsługa przypadku, gdy zaznaczenie jest całkowicie w środku dużego kształtu)
         var center = new Point((startPoint.X + oppositePoint.X) / 2, (startPoint.Y + oppositePoint.Y) / 2);
 
-        return IsPointInPolygon(center, Points);
+        return IsPointInPolygon(center, _points);
 
     }
 
@@ -108,5 +130,16 @@ public class CustomShape(List<Point> points, string contentColor, string contour
             }
         }
         return inside;
+    }
+    
+    public void Scale(ScaleHandle handle, Point newPos)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ConsoleDisplay(int depth = 0)
+    {
+        if (!IsVisible) return;
+        Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
     }
 }

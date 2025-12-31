@@ -1,3 +1,4 @@
+using VectorEditor.Core.Strategy;
 using VectorEditor.Core.Structures;
 
 namespace VectorEditor.Core.Composite;
@@ -48,7 +49,16 @@ public class Layer(string name) : ICanvas
             child.Move(dx, dy);
         }
     }
-    
+
+    public void Scale(ScaleHandle handle, Point newPos)
+    {
+        if (IsBlocked) return;
+        foreach (var child in _children)
+        {
+            child.Scale(handle, newPos);
+        }
+    }
+
     public bool IsWithinBounds(Point startPoint, Point oppositePoint)
     {
         return _children.Count != 0 && 

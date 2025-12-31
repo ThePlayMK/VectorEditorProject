@@ -21,8 +21,8 @@ public class ChangeContourColorStrategy(string newColor) : IModificationStrategy
         switch (target)
         {
             case IShape shape:
-                memento[shape] = shape.ContourColor;
-                shape.ContourColor = newColor;
+                memento[shape] = shape.GetContourColor();
+                shape.SetContourColor(newColor);
                 break;
             case Layer layer:
             {
@@ -43,7 +43,7 @@ public class ChangeContourColorStrategy(string newColor) : IModificationStrategy
 
         foreach (var kvp in oldColors)
         {
-            kvp.Key.ContourColor = kvp.Value;
+            kvp.Key.SetContourColor(kvp.Value);
         }
     }
 }
