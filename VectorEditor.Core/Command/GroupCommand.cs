@@ -11,17 +11,12 @@ public class GroupCommand(Layer targetLayer, Point p1, Point p2) : ICommand
     
     public void Execute()
     {
-        // 1. Normalizacja punktów zaznaczenia
         var topLeft = new Point(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y));
         var bottomRight = new Point(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y));
-
-        // 2. Wyszukanie elementów
+        
         _foundElements = targetLayer.GetChildren()
             .Where(child => child.IsWithinBounds(topLeft, bottomRight))
             .ToList();
-
-        // 3. Wypisanie wyników (tymczasowo, przed wprowadzeniem strategii)
-        //DisplayResults(targetLayer, _foundElements, topLeft, bottomRight);
     }
 
     public void Undo()

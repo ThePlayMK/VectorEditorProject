@@ -8,6 +8,7 @@ public class ApplyStrategyCommand: ICommand
     private readonly List<ICanvas> _targets;
     private readonly IModificationStrategy _strategy;
     private readonly List<object?> _mementos = [];
+    private ICanvas? _activeTarget;
 
     // Konstruktor dla pojedynczego elementu (np. całej Canvy)
     public ApplyStrategyCommand(IModificationStrategy strategy, ICanvas target)
@@ -26,14 +27,35 @@ public class ApplyStrategyCommand: ICommand
     public void Execute()
     {
         _mementos.Clear();
-        foreach (var target in _targets)
+
+        // 1. Logika grupowania specjalnie dla ScaleStrategy
+        if (_strategy is ScaleStrategy && _targets.Count > 1)
         {
-            _mementos.Add(_strategy.Apply(target));
+            var proxy = new Layer("temporary_scale_group");
+            foreach (var t in _targets) proxy.Add(t);
+            
+            _activeTarget = proxy;
+            _mementos.Add(_strategy.Apply(proxy));
+            
+            proxy.GetChildren().ToList().ForEach(c => proxy.Remove(c));
+        }
+        else
+        {
+            // 2. Standardowe zachowanie (pojedynczo)
+            foreach (var target in _targets)
+            {
+                _mementos.Add(_strategy.Apply(target));
+            }
         }
     }
 
     public void Undo()
     {
+        if (_strategy is ScaleStrategy && _targets.Count > 1)
+        {
+            _strategy.Undo(null!, _mementos[0]);
+            return;
+        }
         for (var i = _targets.Count - 1; i >= 0; i--)
         {
             _strategy.Undo(_targets[i], _mementos[i]);
