@@ -20,7 +20,7 @@ public class Layer(string name) : ICanvas
     {
         if (IsBlocked) return;
 
-        int currentOffset = 0;
+        var currentOffset = 0;
 
         foreach (var child in _children)
         {

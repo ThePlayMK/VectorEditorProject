@@ -6,7 +6,8 @@ namespace VectorEditor.Core.Structures;
 public class Circle(Point centerPoint, double radius, string contentColor, string contourColor, int width) : IShape
 {
     private Point _centerPoint = centerPoint;
-    private double _radius = radius;
+    private double _radiusX = radius;
+    private double _radiusY = radius;
     private string _contentColor = contentColor;
     private string _contourColor = contourColor;
     private int _width = width;
@@ -21,14 +22,18 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
     public string GetContourColor() => _contourColor;
     public int GetWidth() => _width;
     public Point GetCenterPoint() => _centerPoint;
-    public double GetRadius() => _radius;
+
+    public IEnumerable<Point> GetPoints() => 
+    [
+        _centerPoint, 
+        new Point(_centerPoint.X + _radiusX, _centerPoint.Y + _radiusY)
+    ];
+    public double GetMinX() => _centerPoint.X - _radiusX;
+    public double GetMaxX() => _centerPoint.X + _radiusX;
+    public double GetMinY() => _centerPoint.Y - _radiusY;
+    public double GetMaxY() => _centerPoint.Y + _radiusY;
     
-    public IEnumerable<Point> GetPoints()
-    {
-        throw new NotImplementedException();
-    }
-    
-    // --- SETTERY (Z LOGIKĄ BLOKADY) ---
+    // --- SETERY (Z LOGIKĄ BLOKADY) ---
     public void SetContentColor(string color)
     {
         if (IsBlocked) return;
@@ -50,12 +55,27 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
     public void SetRadius(double radius)
     {
         if (IsBlocked) return;
-        _radius = radius;
+        _radiusX = radius;
+        _radiusY = radius;
+    }
+
+    public void SetRadius(double radiusX, double radiusY)
+    {
+        if (IsBlocked) return;
+        _radiusX = radiusX;
+        _radiusY = radiusY;
     }
     
     public void SetPoints(List<Point> points)
     {
-        throw new NotImplementedException();
+        if (IsBlocked || points.Count < 2)
+        {
+            return;
+        }
+        
+        _centerPoint = points[0];
+        _radiusX = Math.Abs(points[1].X - points[0].X);
+        _radiusY = Math.Abs(points[1].Y - points[0].Y);
     }
     
     // --- GEOMETRIA ---
@@ -68,32 +88,86 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
 
     public void Scale(ScaleHandle handle, Point newPos)
     {
-        throw new NotImplementedException();
+        if (IsBlocked) return;
+
+        var left = GetMinX();
+        var right = GetMaxX();
+        var top = GetMinY();
+        var bottom = GetMaxY();
+
+        // 1. Wyznaczamy Pivot (punkt, który się nie rusza)
+        var pivot = handle switch
+        {
+            ScaleHandle.TopLeft => new Point(right, bottom),
+            ScaleHandle.Top => new Point(left, bottom),
+            ScaleHandle.TopRight => new Point(left, bottom),
+            ScaleHandle.Right => new Point(left, top),
+            ScaleHandle.BottomRight => new Point(left, top),
+            ScaleHandle.Bottom => new Point(left, top),
+            ScaleHandle.BottomLeft => new Point(right, top),
+            ScaleHandle.Left => new Point(right, top),
+            _ => new Point(left, top)
+        };
+
+        // 2. Obliczamy stare i nowe wymiary Bounding Boxa
+        var oldW = Math.Max(1, right - left);
+        var oldH = Math.Max(1, bottom - top);
+        var newW = oldW;
+        var newH = oldH;
+
+        switch (handle)
+        {
+            case ScaleHandle.TopLeft:
+                newW = right - newPos.X;
+                newH = bottom - newPos.Y;
+                break;
+            case ScaleHandle.Top: 
+                newH = bottom - newPos.Y; 
+                break;
+            case ScaleHandle.TopRight:
+                newW = newPos.X - left;
+                newH = bottom - newPos.Y;
+                break;
+            case ScaleHandle.Right: 
+                newW = newPos.X - left; 
+                break;
+            case ScaleHandle.BottomRight:
+                newW = newPos.X - left;
+                newH = newPos.Y - top;
+                break;
+            case ScaleHandle.Bottom:
+                newH = newPos.Y - top; 
+                break;
+            case ScaleHandle.BottomLeft:
+                newW = right - newPos.X;
+                newH = newPos.Y - top;
+                break;
+            case ScaleHandle.Left: 
+                newW = right - newPos.X; 
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(handle), handle, null);
+        }
+
+        var sx = newW / oldW;
+        var sy = newH / oldH;
+
+        // 3. Wykonujemy transformację
+        ScaleTransform(pivot, sx, sy);
     }
 
     public void ScaleTransform(Point pivot, double sx, double sy)
     {
-        throw new NotImplementedException();
-    }
+        if (IsBlocked) return;
 
-    public double GetMinX()
-    {
-        throw new NotImplementedException();
-    }
+        // 1. Skalujemy środek względem pivotu
+        var newCenterX = pivot.X + (_centerPoint.X - pivot.X) * sx;
+        var newCenterY = pivot.Y + (_centerPoint.Y - pivot.Y) * sy;
+        _centerPoint = new Point(newCenterX, newCenterY);
 
-    public double GetMaxX()
-    {
-        throw new NotImplementedException();
-    }
-
-    public double GetMinY()
-    {
-        throw new NotImplementedException();
-    }
-
-    public double GetMaxY()
-    {
-        throw new NotImplementedException();
+        // 2. Skalujemy promienie (zawsze wartości dodatnie)
+        _radiusX *= Math.Abs(sx);
+        _radiusY *= Math.Abs(sy);
     }
 
     public bool IsWithinBounds(Point startPoint, Point oppositePoint)
@@ -108,16 +182,16 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
         var closestY = Math.Clamp(_centerPoint.Y, startPoint.Y, oppositePoint.Y);
 
         // 2. Oblicz odległość (euklidesową) od środka koła do tego najbliższego punktu
-        var dx = _centerPoint.X - closestX;
-        var dy = _centerPoint.Y - closestY;
+        var dx = (_centerPoint.X - closestX) / _radiusX;
+        var dy = (_centerPoint.Y - closestY) / _radiusY;
 
         // 3. Sprawdź, czy kwadrat odległości jest mniejszy lub równy kwadratowi promienia
         // (Unikamy wyciągania pierwiastka dla wydajności)
-        return (dx * dx + dy * dy) <= (_radius * _radius);
+        return dx * dx + dy * dy <= 1;
     }
     
     public override string ToString() => 
-        $"Circle Center: {_centerPoint}, Radius: {_radius}, Color: {_contentColor} and {_contourColor}, Width: {_width}px";
+        $"Circle Center: {_centerPoint}, Radius: {_radiusX} x {_radiusY}, Color: {_contentColor} and {_contourColor}, Width: {_width}px";
     
     public void ConsoleDisplay(int depth = 0)
     {

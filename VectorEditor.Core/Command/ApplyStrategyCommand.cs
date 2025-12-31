@@ -31,13 +31,17 @@ public class ApplyStrategyCommand: ICommand
         // 1. Logika grupowania specjalnie dla ScaleStrategy
         if (_strategy is ScaleStrategy && _targets.Count > 1)
         {
+            var originalParents = _targets.ToDictionary(t => t, t => t.ParentLayer);
             var proxy = new Layer("temporary_scale_group");
             foreach (var t in _targets) proxy.Add(t);
             
             _activeTarget = proxy;
             _mementos.Add(_strategy.Apply(proxy));
             
-            proxy.GetChildren().ToList().ForEach(c => proxy.Remove(c));
+            foreach (var t in _targets)
+            {
+                t.ParentLayer = originalParents[t];
+            }
         }
         else
         {

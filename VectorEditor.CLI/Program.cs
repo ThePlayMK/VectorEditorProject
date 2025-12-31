@@ -1019,7 +1019,7 @@ Console.WriteLine("\n>>> KONIEC TESTU PRZESKALOWANIA WARSTWY <<<");
 
 
 // --- TEST 31: PRZESKALOWANIE GRUPY ---
-
+/*
 Console.WriteLine("\n>>> TEST 30: PRZESKALOWANIE WARSTWY (PROSTE PUNKTY) <<<");
 
 var cmdManager = new CommandManager();
@@ -1076,3 +1076,54 @@ layerToScale.ConsoleDisplay();
 Console.WriteLine("\n>>> KONIEC TESTU PRZESKALOWANIA WARSTWY <<<");
 
 
+*/
+
+// --- TEST 32: PRZESKALOWANIE OKRĘGU (ZMIANA W ELIPSĘ) ---
+
+Console.WriteLine("\n>>> TEST 32: PRZESKALOWANIE OKRĘGU (CIRCLE -> ELLIPSE) <<<");
+
+var cmdManager = new CommandManager();
+var circleLayer = new Layer("Circle Test Layer");
+
+// Tworzymy okrąg: środek (10, 10), promień 5. 
+// Zasięg geometryczny: X od 5 do 15, Y od 5 do 15.
+var circle = new Circle(new Point(10, 10), 5, "yellow", "black", 2);
+
+circleLayer.Add(circle);
+
+Console.WriteLine("Stan początkowy (Okrąg):");
+circleLayer.ConsoleDisplay();
+
+// Wybieramy obszar zawierający okrąg
+var groupCmd = new GroupCommand(circleLayer, new Point(0, 0), new Point(20, 20));
+groupCmd.Execute();
+
+// Strategia: Rozciągamy BottomRight do (30, 20)
+// To skalowanie jest nieproporcjonalne: 
+// Szerokość grupy zmieni się z 10 (15-5) na 25 (30-5) -> sx = 2.5
+// Wysokość grupy zmieni się z 10 (15-5) na 15 (20-5) -> sy = 1.5
+var scaleStrategy = new ScaleStrategy(ScaleHandle.BottomRight, new Point(30, 20));
+var applyScaleCmd = new ApplyStrategyCommand(scaleStrategy, groupCmd.FoundElements);
+
+Console.WriteLine("\nSkaluję okrąg nieproporcjonalnie (BottomRight do (30, 20))...");
+cmdManager.Execute(applyScaleCmd);
+
+Console.WriteLine("Stan po przeskalowaniu (Powinna być Elipsa):");
+circleLayer.ConsoleDisplay();
+// Spodziewany wynik: RX = 5 * 2.5 = 12.5, RY = 5 * 1.5 = 7.5
+
+// Test UNDO
+Console.WriteLine("\nWykonuję UNDO...");
+cmdManager.Undo();
+
+Console.WriteLine("Stan po UNDO (Powrót do idealnego koła, R=5):");
+circleLayer.ConsoleDisplay();
+
+// Test REDO
+Console.WriteLine("\nWykonuję REDO...");
+cmdManager.Redo();
+
+Console.WriteLine("Stan po REDO (Ponownie elipsa):");
+circleLayer.ConsoleDisplay();
+
+Console.WriteLine("\n>>> KONIEC TESTU OKRĘGU <<<");
