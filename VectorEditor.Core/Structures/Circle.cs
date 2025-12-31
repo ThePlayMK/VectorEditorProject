@@ -12,7 +12,7 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
     private string _contourColor = contourColor;
     private int _width = width;
 
-    public string Name => "Circle";
+    public string Name => Math.Abs(_radiusX - _radiusY) < 0.001 ? "Circle" : "Ellipse";
     public Layer? ParentLayer { get; set; }
     public bool IsBlocked { get; set; } 
     public bool IsVisible { get; set; } = true;
@@ -22,7 +22,6 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
     public string GetContourColor() => _contourColor;
     public int GetWidth() => _width;
     public Point GetCenterPoint() => _centerPoint;
-
     public IEnumerable<Point> GetPoints() => 
     [
         _centerPoint, 
@@ -79,7 +78,6 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
     }
     
     // --- GEOMETRIA ---
-    
     public void Move(int dx, int dy)
     {
         if (IsBlocked) return;
