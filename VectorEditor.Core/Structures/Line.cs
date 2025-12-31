@@ -11,6 +11,7 @@ public class Line(Point startPoint, Point endPoint, string contourColor, int wid
     private int Width { get; set; } = width;
     public string Name => "Line";
     public Layer? ParentLayer { get; set; }
+    public bool IsLocked { get; set; } 
     
     public override string ToString() => 
         $"Line from {StartPoint} to {EndPoint}, ContourColor: {ContourColor}, Width: {Width}px";

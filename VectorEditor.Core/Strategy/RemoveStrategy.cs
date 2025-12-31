@@ -9,7 +9,7 @@ public class RemoveStrategy : IModificationStrategy
 
     public object Apply(ICanvas target)
     {
-        if (target.ParentLayer == null)
+        if (target.IsLocked || target.ParentLayer == null)
         {
             return new List<RemovalMemento>();
         }

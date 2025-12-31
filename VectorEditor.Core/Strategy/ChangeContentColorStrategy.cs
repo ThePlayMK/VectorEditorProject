@@ -14,6 +14,11 @@ public class ChangeContentColorStrategy(string newColor) : IModificationStrategy
 
     private void ApplyRecursive(ICanvas target, Dictionary<IShape, string> memento)
     {
+        if (target.IsLocked)
+        {
+            return;
+        }
+        
         switch (target)
         {
             case Line line: // linia ma tylko kontur, wybrałem że jeżeli zmieniamy content to kontur zostaje zmieniony, inne rozwiązanie to żeby nic się nie działo

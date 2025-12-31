@@ -12,6 +12,7 @@ public class Triangle(Point firstPoint, Point secondPoint, Point thirdPoint, str
     private int Width { get; set; } = width;
     public string Name => "Triangle";
     public Layer? ParentLayer { get; set; }
+    public bool IsLocked { get; set; } 
     
     public override string ToString() => 
         $"Rectangle from ({FirstPoint}), ({SecondPoint}), ({ThirdPoint}); Color: {ContentColor} and {ContourColor}, Width: {Width}px";
