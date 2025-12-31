@@ -12,6 +12,7 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
     public string Name => "Circle";
     public Layer? ParentLayer { get; set; }
     public bool IsBlocked { get; set; } 
+    public bool IsVisible { get; set; } = true;
     
     public override string ToString() => 
         $"Circle Center: {CenterPoint}, Radius: {Radius}, Color: {ContentColor} and {ContourColor}, Width: {Width}px";
@@ -20,6 +21,7 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
 
     public void ConsoleDisplay(int depth = 0)
     {
+        if (!IsVisible) return;
         Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
     }
 

@@ -12,11 +12,13 @@ public class Line(Point startPoint, Point endPoint, string contourColor, int wid
     public string Name => "Line";
     public Layer? ParentLayer { get; set; }
     public bool IsBlocked { get; set; } 
+    public bool IsVisible { get; set; } = true;
     
     public override string ToString() => 
         $"Line from {StartPoint} to {EndPoint}, ContourColor: {ContourColor}, Width: {Width}px";
     public void ConsoleDisplay(int depth = 0)
     {
+        if (!IsVisible) return;
         Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
     }
 

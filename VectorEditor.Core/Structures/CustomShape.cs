@@ -11,6 +11,7 @@ public class CustomShape(List<Point> points, string contentColor, string contour
     public string Name => "Custom";
     public Layer? ParentLayer { get; set; }
     public bool IsBlocked { get; set; } 
+    public bool IsVisible { get; set; } = true;
 
     public override string ToString()
     {
@@ -21,6 +22,7 @@ public class CustomShape(List<Point> points, string contentColor, string contour
 
     public void ConsoleDisplay(int depth = 0)
     {
+        if (!IsVisible) return;
         Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
     }
 

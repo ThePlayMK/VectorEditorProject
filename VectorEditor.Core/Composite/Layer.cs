@@ -9,7 +9,8 @@ public class Layer(string name) : ICanvas
     public Layer? ParentLayer { get; set; }
     
     public IEnumerable<ICanvas> GetChildren() => _children;
-    public bool IsBlocked { get; set; } 
+    public bool IsBlocked { get; set; }
+    public bool IsVisible { get; set; } = true;
     
     public void Add(ICanvas canvas)
     {
@@ -46,10 +47,18 @@ public class Layer(string name) : ICanvas
 
     public void ConsoleDisplay(int depth = 0)
     {
+        if (!IsVisible) 
+        {
+            Console.WriteLine(new string('-', depth) + "Layer: " + Name + " [HIDDEN]");
+            return; 
+        }
+        
         Console.WriteLine(new string('-', depth) + Name);
         foreach (var child in _children)
         {
             child.ConsoleDisplay(depth + 2);
         }
     }
+
+    
 }

@@ -13,12 +13,14 @@ public class Triangle(Point firstPoint, Point secondPoint, Point thirdPoint, str
     public string Name => "Triangle";
     public Layer? ParentLayer { get; set; }
     public bool IsBlocked { get; set; } 
+    public bool IsVisible { get; set; } = true;
     
     public override string ToString() => 
         $"Rectangle from ({FirstPoint}), ({SecondPoint}), ({ThirdPoint}); Color: {ContentColor} and {ContourColor}, Width: {Width}px";
     
     public void ConsoleDisplay(int depth = 0)
     {
+        if (!IsVisible) return;
         Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
     }
 

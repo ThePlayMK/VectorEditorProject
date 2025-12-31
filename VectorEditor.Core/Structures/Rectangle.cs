@@ -13,6 +13,7 @@ public class Rectangle : IShape
     private int Width { get; set; }
     public Layer? ParentLayer { get; set; }
     public bool IsBlocked { get; set; } 
+    public bool IsVisible { get; set; } = true;
     public string Name => "Rectangle";
 
     public Rectangle(Point startPoint, Point oppositePoint, string contentColor, string contourColor, int width)
@@ -32,6 +33,7 @@ public class Rectangle : IShape
     
     public void ConsoleDisplay(int depth = 0)
     {
+        if (!IsVisible) return;
         Console.WriteLine(new string('-', depth) + Name + ": " + ToString());
     }
 
