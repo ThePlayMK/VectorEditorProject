@@ -18,7 +18,23 @@ public class Layer(string name) : ICanvas
     // --- SETERY ---
     public void SetPoints(List<Point> points)
     {
-        
+        if (IsBlocked) return;
+
+        int currentOffset = 0;
+
+        foreach (var child in _children)
+        {
+
+            var pointsNeeded = child.GetPoints().Count();
+
+            if (currentOffset + pointsNeeded > points.Count)
+            {
+                continue;
+            }
+            var childPoints = points.GetRange(currentOffset, pointsNeeded);
+            child.SetPoints(childPoints);
+            currentOffset += pointsNeeded;
+        }
     }
     
     // --- ZARZĄDZANIE STRUKTURĄ ---

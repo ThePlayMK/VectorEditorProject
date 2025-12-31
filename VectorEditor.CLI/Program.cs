@@ -909,6 +909,7 @@ Console.WriteLine("\n>>> KONIEC TESTU PRZESKALOWANIA TRÓJKĄTA <<<");
 */
 
 // --- TEST 29: PRZESKALOWANIE CUSTOMSHAPE (TRAPEZ PROSTOKĄTNY) ---
+/*
 Console.WriteLine("\n>>> TEST 29: PRZESKALOWANIE CUSTOMSHAPE (TRAPEZ PROSTOKĄTNY) <<<");
 
 var cmdManager = new CommandManager();
@@ -959,4 +960,58 @@ customShapeLayer.ConsoleDisplay();
 
 Console.WriteLine("\n>>> KONIEC TESTU PRZESKALOWANIA CUSTOMSHAPE <<<");
 
+
+*/
+
+// --- TEST 30: PRZESKALOWANIE WARSTWY Z PROSTYMI WSPÓŁRZĘDNYMI ---
+
+Console.WriteLine("\n>>> TEST 30: PRZESKALOWANIE WARSTWY (PROSTE PUNKTY) <<<");
+
+var cmdManager = new CommandManager();
+var layerToScale = new Layer("Layer Scale Test");
+
+// Prostokąt od (0,0) do (10,10)
+var simpleRect = new Rectangle(new Point(0, 0), new Point(10, 10), "blue", "black", 1);
+
+// Trójkąt z prostymi współrzędnymi: (0,20), (10,20), (5,30)
+var simpleTriangle = new Triangle(
+    new Point(0, 20),
+    new Point(10, 20),
+    new Point(5, 30),
+    "red",
+    "black",
+    1
+);
+
+layerToScale.Add(simpleRect);
+layerToScale.Add(simpleTriangle);
+
+Console.WriteLine("Stan początkowy warstwy:");
+layerToScale.ConsoleDisplay();
+
+// Przeskalowujemy warstwę - przesuwamy prawy dolny róg do (20, 40)
+var scaleLayerStrategy = new ScaleStrategy(ScaleHandle.BottomRight, new Point(20, 40));
+var scaleLayerCmd = new ApplyStrategyCommand(scaleLayerStrategy, layerToScale);
+
+Console.WriteLine("\nPrzeskaluję warstwę (przesuwam BottomRight do (20, 40))...");
+cmdManager.Execute(scaleLayerCmd);
+
+Console.WriteLine("Stan po przeskalowaniu:");
+layerToScale.ConsoleDisplay();
+
+// Test UNDO
+Console.WriteLine("\nWykonuję UNDO...");
+cmdManager.Undo();
+
+Console.WriteLine("Stan po UNDO (warstwa powinna wrócić do pierwotnych wymiarów):");
+layerToScale.ConsoleDisplay();
+
+// Test REDO
+Console.WriteLine("\nWykonuję REDO...");
+cmdManager.Redo();
+
+Console.WriteLine("Stan po REDO (warstwa powinna być znowu przeskalowana):");
+layerToScale.ConsoleDisplay();
+
+Console.WriteLine("\n>>> KONIEC TESTU PRZESKALOWANIA WARSTWY <<<");
 

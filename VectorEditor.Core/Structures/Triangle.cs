@@ -222,7 +222,7 @@ public class Triangle(
     }
 
     public override string ToString() =>
-        $"Rectangle from ({_firstPoint}), ({_secondPoint}), ({_thirdPoint}); Color: {_contentColor} and {_contourColor}, Width: {_width}px";
+        $"Triangle from ({_firstPoint}), ({_secondPoint}), ({_thirdPoint}); Color: {_contentColor} and {_contourColor}, Width: {_width}px";
 
     public void ConsoleDisplay(int depth = 0)
     {
