@@ -13,6 +13,7 @@ public class Layer(string name) : ICanvas
     // --- GETTERY ---
     public string GetName() => name;
     public IEnumerable<ICanvas> GetChildren() => _children;
+    public int GetChildIndex(ICanvas child) => _children.IndexOf(child);
     public IEnumerable<Point> GetPoints() => _children.SelectMany(c => c.GetPoints());
 
     // --- SETERY ---

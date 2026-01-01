@@ -1079,7 +1079,7 @@ Console.WriteLine("\n>>> KONIEC TESTU PRZESKALOWANIA WARSTWY <<<");
 */
 
 // --- TEST 32: PRZESKALOWANIE OKRĘGU (ZMIANA W ELIPSĘ) ---
-
+/*
 Console.WriteLine("\n>>> TEST 32: PRZESKALOWANIE OKRĘGU (CIRCLE -> ELLIPSE) <<<");
 
 var cmdManager = new CommandManager();
@@ -1126,4 +1126,47 @@ cmdManager.Redo();
 Console.WriteLine("Stan po REDO (Ponownie elipsa):");
 circleLayer.ConsoleDisplay();
 
-Console.WriteLine("\n>>> KONIEC TESTU OKRĘGU <<<");
+Console.WriteLine("\n>>> KONIEC TESTU OKRĘGU <<<");*/
+
+// --- TEST 33: ZMIANA KOLEJNOŚCI (Z-ORDER) ---
+Console.WriteLine("\n>>> TEST 40: ZMIANA KOLEJNOŚCI OBIEKTÓW (Z-ORDER) <<<");
+
+var cmdManager = new CommandManager();
+var scene = new Layer("Main Scene");
+
+// Tworzymy 3 obiekty
+var redRect = new Rectangle(new Point(0,0), new Point(10,10), "red", "black", 1);
+var greenRect = new Rectangle(new Point(5,5), new Point(15,15), "green", "black", 1);
+var blueRect = new Rectangle(new Point(10,10), new Point(20,20), "blue", "black", 1);
+
+// Dodajemy je kolejno: Czerwony (spód), Zielony (środek), Niebieski (wierzch)
+scene.Add(redRect);
+scene.Add(greenRect);
+scene.Add(blueRect);
+
+Console.WriteLine("Kolejność początkowa (od spodu do wierzchu):");
+scene.ConsoleDisplay();
+
+// 1. Przesuwamy Czerwony na sam wierzch (BringToFront)
+Console.WriteLine("\n--- Wykonuję: BringToFront (Czerwony na wierzch) ---");
+var toFrontCmd = new ChangeOrderCommand(redRect, OrderAction.BringToFront);
+cmdManager.Execute(toFrontCmd);
+scene.ConsoleDisplay(); // Spodziewane: Green, Blue, Red
+
+// 2. Przesuwamy Niebieski o jeden poziom niżej (SendBackward)
+Console.WriteLine("\n--- Wykonuję: SendBackward (Niebieski o jeden w dół) ---");
+var backwardCmd = new ChangeOrderCommand(blueRect, OrderAction.SendBackward);
+cmdManager.Execute(backwardCmd);
+scene.ConsoleDisplay(); // Spodziewane: Blue, Green, Red (bo blue był na środku i spadł na spód)
+
+// 3. Test UNDO (Cofamy SendBackward)
+Console.WriteLine("\n--- Wykonuję: UNDO (Niebieski wraca na środek) ---");
+cmdManager.Undo();
+scene.ConsoleDisplay(); // Spodziewane: Green, Blue, Red
+
+// 4. Test UNDO (Cofamy BringToFront)
+Console.WriteLine("\n--- Wykonuję: UNDO (Czerwony wraca na spód) ---");
+cmdManager.Undo();
+scene.ConsoleDisplay(); // Spodziewane: Red, Green, Blue
+
+Console.WriteLine("\n>>> KONIEC TESTU KOLEJNOŚCI <<<");
