@@ -13,6 +13,7 @@ public class Rectangle : IShape
     private Point _oppositePoint;
     private Point? _helperPoint1;
     private Point? _helperPoint2;
+    private double _transparency = 0;
 
     public Layer? ParentLayer { get; set; }
     public bool IsBlocked { get; set; }
@@ -35,6 +36,7 @@ public class Rectangle : IShape
     public int GetWidth() => _width;
     public Point GetStartPoint() => _startPoint;
     public Point GetOppositePoint() => _oppositePoint;
+    public double GetTransparency() => _transparency;
     public IEnumerable<Point> GetPoints() => new List<Point> {_startPoint, _oppositePoint};
 
     // --- SETERY (Publiczne) ---
@@ -67,6 +69,11 @@ public class Rectangle : IShape
     {
         if (IsBlocked) return;
         _width = width;
+    }
+    
+    public void SetTransparency(double transparency)
+    {
+        _transparency = transparency;
     }
 
     // --- GEOMETRIA (Również pilnuje blokady) ---

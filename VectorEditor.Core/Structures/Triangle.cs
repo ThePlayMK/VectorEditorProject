@@ -17,6 +17,7 @@ public class Triangle(
     private string _contentColor = contentColor;
     private string _contourColor = contourColor;
     private int _width = width;
+    private double _transparency = 0;
 
     public Layer? ParentLayer { get; set; }
     public bool IsBlocked { get; set; }
@@ -30,6 +31,7 @@ public class Triangle(
     public Point GetFirstPoint() => _firstPoint;
     public Point GetSecondPoint() => _secondPoint;
     public Point GetThirdPoint() => _thirdPoint;
+    public double GetTransparency() => _transparency;
     public IEnumerable<Point> GetPoints() => new List<Point> {_firstPoint, _secondPoint, _thirdPoint};
     
     public double GetMinX() => Math.Min(_firstPoint.X, Math.Min(_secondPoint.X, _thirdPoint.X));
@@ -67,6 +69,11 @@ public class Triangle(
         _firstPoint = points[0];
         _secondPoint = points[1];
         _thirdPoint = points[2];
+    }
+    
+    public void SetTransparency(double transparency)
+    {
+        _transparency = transparency;
     }
     
     // --- GEOMETRIA ---

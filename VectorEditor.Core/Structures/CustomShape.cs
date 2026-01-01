@@ -9,6 +9,7 @@ public class CustomShape(List<Point> points, string contentColor, string contour
     private string _contentColor = contentColor;
     private string _contourColor = contourColor;
     private int _width = width;
+    private double _transparency = 0;
 
     public Layer? ParentLayer { get; set; }
     public bool IsBlocked { get; set; }
@@ -19,6 +20,7 @@ public class CustomShape(List<Point> points, string contentColor, string contour
     public string GetContentColor() => _contentColor;
     public string GetContourColor() => _contourColor;
     public int GetWidth() => _width;
+    public double GetTransparency() => _transparency;
     public IEnumerable<Point> GetPoints() => _points;
     public double GetMinX() => _points.Count == 0 ? 0 : _points.Min(p => p.X);
     public double GetMaxX() => _points.Count == 0 ? 0 : _points.Max(p => p.X);
@@ -58,6 +60,11 @@ public class CustomShape(List<Point> points, string contentColor, string contour
         {
             _points[i] = points[i];
         }
+    }
+    
+    public void SetTransparency(double transparency)
+    {
+        _transparency = transparency;
     }
 
     // --- GEOMETRIA ---

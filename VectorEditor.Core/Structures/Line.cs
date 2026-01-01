@@ -9,6 +9,7 @@ public class Line(Point startPoint, Point endPoint, string contourColor, int wid
     private Point _endPoint = endPoint;
     private string _contourColor = contourColor;
     private int _width = width;
+    private double _transparency = 0;
 
     public Layer? ParentLayer { get; set; }
     public bool IsBlocked { get; set; }
@@ -22,6 +23,7 @@ public class Line(Point startPoint, Point endPoint, string contourColor, int wid
     public int GetWidth() => _width;
     public Point GetStartPoint() => _startPoint;
     public Point GetEndPoint() => _endPoint;
+    public double GetTransparency() => _transparency;
     public IEnumerable<Point> GetPoints() => new List<Point> { _startPoint, _endPoint };
     public double GetMinX() => Math.Min(_startPoint.X, _endPoint.X);
     public double GetMaxX() => Math.Max(_startPoint.X, _endPoint.X);
@@ -59,6 +61,11 @@ public class Line(Point startPoint, Point endPoint, string contourColor, int wid
 
         _startPoint = points[0];
         _endPoint = points[1];
+    }
+    
+    public void SetTransparency(double transparency)
+    {
+        _transparency = transparency;
     }
 
     // --- GEOMETRIA ---

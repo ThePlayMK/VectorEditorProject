@@ -11,6 +11,7 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
     private string _contentColor = contentColor;
     private string _contourColor = contourColor;
     private int _width = width;
+    private double _transparency = 0;
 
     public string Name => Math.Abs(_radiusX - _radiusY) < 0.001 ? "Circle" : "Ellipse";
     public Layer? ParentLayer { get; set; }
@@ -22,6 +23,7 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
     public string GetContourColor() => _contourColor;
     public int GetWidth() => _width;
     public Point GetCenterPoint() => _centerPoint;
+    public double GetTransparency() => _transparency;
     public IEnumerable<Point> GetPoints() => 
     [
         _centerPoint, 
@@ -75,6 +77,11 @@ public class Circle(Point centerPoint, double radius, string contentColor, strin
         _centerPoint = points[0];
         _radiusX = Math.Abs(points[1].X - points[0].X);
         _radiusY = Math.Abs(points[1].Y - points[0].Y);
+    }
+
+    public void SetTransparency(double transparency)
+    {
+        _transparency = transparency;
     }
     
     // --- GEOMETRIA ---
